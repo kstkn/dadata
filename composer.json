@@ -1,0 +1,25 @@
+{
+  "name": "gietos/dadata",
+  "description": "Dadata API client (https://dadata.ru)",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/gietos/dadata/issues",
+    "source": "https://github.com/gietos/dadata"
+  },
+  "authors": [
+    {
+      "name": "Sergey Kasatkin",
+      "email": "spam@onsky.ru"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0",
+    "guzzlehttp/guzzle": "6.1.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dadata\\": "src/"
+    }
+  }
+}
