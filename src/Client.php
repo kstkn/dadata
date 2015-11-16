@@ -130,6 +130,13 @@ class Client
         return $object;
     }
 
+    /**
+     * Guesses and converts property type by phpdoc comment.
+     *
+     * @param \ReflectionProperty $property
+     * @param  mixed $value
+     * @return mixed
+     */
     protected function getValueWithCorrectType(\ReflectionProperty $property, $value)
     {
         $comment = $property->getDocComment();
