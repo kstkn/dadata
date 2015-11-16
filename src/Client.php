@@ -33,17 +33,11 @@ class Client
      */
     protected $httpClient;
 
-    public function __construct(HttpClient $httpClient, array $params)
+    public function __construct(HttpClient $httpClient, array $config = [])
     {
         $this->httpClient = $httpClient;
-        if (isset($params['token'])) {
-            $this->token = $params['token'];
-        }
-        if (isset($params['secret'])) {
-            $this->secret = $params['secret'];
-        }
-        if (!empty($cache)) {
-            $this->cache = $cache;
+        foreach ($config as $name => $value) {
+            $this->$name = $value;
         }
     }
 
