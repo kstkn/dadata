@@ -26,7 +26,7 @@ $client = new Dadata\Client(new \GuzzleHttp\Client(), [
 ]);
 ```
 
-### Standardization
+### Clean
 
 ``` php
 $response = $client->cleanAddress('мск сухонска 11/-89');
