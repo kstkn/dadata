@@ -24,7 +24,12 @@ $client = new Dadata\Client(new \GuzzleHttp\Client(), [
     'token' => '...',
     'secret' => '...',
 ]);
+```
 
-$address = $client->cleanAddress('msk, tverskaya, 1');
-echo 'Result: ' . $address->result . PHP_EOL;
+### Standardization
+
+``` php
+$response = $client->cleanAddress('мск сухонска 11/-89');
+$response = $client->cleanPhone('тел 7165219 доб139');
+$response = $client->cleanPassport('4509 235857');
 ```
