@@ -3,6 +3,7 @@
 namespace Dadata;
 
 use Dadata\Response\Address;
+use Dadata\Response\Name;
 use Dadata\Response\Passport;
 use Dadata\Response\Phone;
 use GuzzleHttp\Psr7\Request;
@@ -76,6 +77,18 @@ class Client
     {
         $response = $this->query($this->prepareUri('clean/passport'), $passport);
         return $this->populate(new Passport(), $response);
+    }
+
+    /**
+     * Cleans name.
+     *
+     * @param string $name
+     * @return Name
+     */
+    public function cleanName($name)
+    {
+        $response = $this->query($this->prepareUri('clean/name'), $name);
+        return $this->populate(new Name(), $response);
     }
 
     /**
