@@ -21,6 +21,10 @@ class Name extends Base
      */
     public $name;
     /**
+     * @var string Отчество
+     */
+    public $patronymic;
+    /**
      * @var string Пол
      *             М — мужской;
      *             Ж — женский;
