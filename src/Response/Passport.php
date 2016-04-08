@@ -2,7 +2,7 @@
 
 namespace Dadata\Response;
 
-class Passport extends Base
+class Passport extends AbstractResponse
 {
     /**
      * @var string Исходная серия и номер одной строкой

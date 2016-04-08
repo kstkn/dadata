@@ -2,6 +2,7 @@
 
 namespace Dadata;
 
+use Dadata\Response\AbstractResponse;
 use Dadata\Response\Address;
 use Dadata\Response\Name;
 use Dadata\Response\Passport;
@@ -59,7 +60,10 @@ class Client
      * Cleans address.
      *
      * @param string $address
+     *
      * @return Address
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function cleanAddress($address)
     {
@@ -71,7 +75,10 @@ class Client
      * Cleans phone.
      *
      * @param string $phone
+     *
      * @return Phone
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function cleanPhone($phone)
     {
@@ -83,7 +90,10 @@ class Client
      * Cleans passport.
      *
      * @param string $passport
+     *
      * @return Passport
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function cleanPassport($passport)
     {
@@ -95,7 +105,10 @@ class Client
      * Cleans name.
      *
      * @param string $name
+     *
      * @return Name
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function cleanName($name)
     {
@@ -104,25 +117,41 @@ class Client
     }
 
     /**
+     * Gets balance.
+     *
+     * @return float
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     */
+    public function getBalance()
+    {
+        $response = $this->query($this->prepareUri('profile/balance'));
+        return (double) $response['balance'];
+    }
+
+    /**
      * Requests API.
      *
      * @param string $uri
      * @param mixed  $params
+     *
      * @return array
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
-    protected function query($uri, $params)
+    protected function query($uri, $params = null)
     {
         $request = new Request('POST', $uri, [
             'Content-Type'  => 'application/json',
             'Authorization' => 'Token ' . $this->token,
             'X-Secret'      => $this->secret,
-        ], json_encode([$params]));
+        ], null !== $params ? json_encode([$params]) : null);
 
         $response = $this->httpClient->send($request);
 
         $result = json_decode($response->getBody(), true);
 
-        if (empty($result) || !is_array($result)) {
+        if (null === $result || !is_array($result)) {
             throw new \RuntimeException('Empty result');
         }
 
@@ -143,18 +172,18 @@ class Client
     /**
      * Populates object with data.
      *
-     * @param object $object
+     * @param AbstractResponse $object
      * @param array  $data
-     * @return object
+     * @return AbstractResponse
      */
-    protected function populate($object, array $data)
+    protected function populate(AbstractResponse $object, array $data)
     {
         $reflect = new \ReflectionClass($object);
 
         $properties = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC);
 
         foreach ($properties as $property) {
-            if (isset($data[$property->name])) {
+            if (array_key_exists($property->name, $data)) {
                 $object->{$property->name} = $this->getValueWithCorrectType($property, $data[$property->name]);
             }
         }

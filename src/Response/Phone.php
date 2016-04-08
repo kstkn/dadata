@@ -2,7 +2,7 @@
 
 namespace Dadata\Response;
 
-class Phone extends Base
+class Phone extends AbstractResponse
 {
     /**
      * @var string Исходный телефон одной строкой

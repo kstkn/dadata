@@ -2,7 +2,7 @@
 
 namespace Dadata\Response;
 
-class Name extends Base
+class Name extends AbstractResponse
 {
     /**
      * @var string Исходные ФИО одной строкой

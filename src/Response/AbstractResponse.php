@@ -2,7 +2,7 @@
 
 namespace Dadata\Response;
 
-abstract class Base
+abstract class AbstractResponse
 {
     /**
      * @var string Исходная строка

@@ -2,7 +2,7 @@
 
 namespace Dadata\Response;
 
-class Address extends Base
+class Address extends AbstractResponse
 {
     /**
      * @var string Исходный адрес одной строкой
@@ -196,6 +196,20 @@ class Address extends Base
      */
     public $geo_lon;
     /**
+     * @var string|null Внутри кольцевой?
+     *                  IN_MKAD — внутри МКАД (Москва);
+     *                  OUT_MKAD — за МКАД (Москва или Московская область);
+     *                  IN_KAD — внутри КАД (Санкт-Петербург);
+     *                  OUT_KAD — за КАД (Санкт-Петербург или Ленинградская область);
+     *                  пусто — в остальных случаях.
+     */
+    public $beltway_hit;
+    /**
+     * @var int|null Расстояние от кольцевой в км.
+     *               Заполнено, только если beltway_hit = OUT_MKAD или OUT_KAD, иначе пустое.
+     */
+    public $beltway_distance;
+    /**
      * @var integer Код точности координат
      *              0    Точные координаты
      *              1    Ближайший дом
@@ -235,6 +249,6 @@ class Address extends Base
 
     public function __toString()
     {
-        return empty($this->result) ? '' : $this->result;
+        return (string) $this->result;
     }
 }
