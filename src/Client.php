@@ -27,6 +27,11 @@ class Client
      * Исходное значение пустое или заведомо "мусорное"
      */
     const QC_INVALID = 2;
+    
+    const METHOD_GET = 'GET';
+    
+    const METHOD_POST = 'POST';
+    
     /**
      * @var string
      */
@@ -125,7 +130,7 @@ class Client
      */
     public function getBalance()
     {
-        $response = $this->query($this->prepareUri('profile/balance'));
+        $response = $this->query($this->prepareUri('profile/balance'), null, self::METHOD_GET);
         return (double) $response['balance'];
     }
 
@@ -133,19 +138,20 @@ class Client
      * Requests API.
      *
      * @param string $uri
-     * @param mixed  $params
+     * @param array  $params
+     *
+     * @param string $method
      *
      * @return array
-     * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
-    protected function query($uri, $params = null)
+    protected function query($uri, array $params = [], $method = self::METHOD_POST)
     {
-        $request = new Request('POST', $uri, [
+        $request = new Request($method, $uri, [
             'Content-Type'  => 'application/json',
             'Authorization' => 'Token ' . $this->token,
             'X-Secret'      => $this->secret,
-        ], null !== $params ? json_encode([$params]) : null);
+        ], 0 < count($params) ? json_encode([$params]) : null);
 
         $response = $this->httpClient->send($request);
 
