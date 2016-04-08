@@ -72,7 +72,7 @@ class Client
      */
     public function cleanAddress($address)
     {
-        $response = $this->query($this->prepareUri('clean/address'), $address);
+        $response = $this->query($this->prepareUri('clean/address'), [$address]);
         return $this->populate(new Address(), $response);
     }
 
@@ -87,7 +87,7 @@ class Client
      */
     public function cleanPhone($phone)
     {
-        $response = $this->query($this->prepareUri('clean/phone'), $phone);
+        $response = $this->query($this->prepareUri('clean/phone'), [$phone]);
         return $this->populate(new Phone(), $response);
     }
 
@@ -102,7 +102,7 @@ class Client
      */
     public function cleanPassport($passport)
     {
-        $response = $this->query($this->prepareUri('clean/passport'), $passport);
+        $response = $this->query($this->prepareUri('clean/passport'), [$passport]);
         return $this->populate(new Passport(), $response);
     }
 
@@ -117,7 +117,7 @@ class Client
      */
     public function cleanName($name)
     {
-        $response = $this->query($this->prepareUri('clean/name'), $name);
+        $response = $this->query($this->prepareUri('clean/name'), [$name]);
         return $this->populate(new Name(), $response);
     }
 
@@ -131,7 +131,7 @@ class Client
     public function getBalance()
     {
         $response = $this->query($this->prepareUri('profile/balance'), [], self::METHOD_GET);
-        return (double) $response['balance'];
+        return (double) $response;
     }
 
     /**
@@ -152,7 +152,7 @@ class Client
             'Content-Type'  => 'application/json',
             'Authorization' => 'Token ' . $this->token,
             'X-Secret'      => $this->secret,
-        ], 0 < count($params) ? json_encode([$params]) : null);
+        ], 0 < count($params) ? json_encode($params) : null);
 
         $response = $this->httpClient->send($request);
 
