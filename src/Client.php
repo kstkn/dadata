@@ -130,7 +130,7 @@ class Client
      */
     public function getBalance()
     {
-        $response = $this->query($this->prepareUri('profile/balance'), null, self::METHOD_GET);
+        $response = $this->query($this->prepareUri('profile/balance'), [], self::METHOD_GET);
         return (double) $response['balance'];
     }
 
@@ -143,6 +143,7 @@ class Client
      * @param string $method
      *
      * @return array
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
     protected function query($uri, array $params = [], $method = self::METHOD_POST)
