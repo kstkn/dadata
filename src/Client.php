@@ -180,7 +180,7 @@ class Client
      * Populates object with data.
      *
      * @param AbstractResponse $object
-     * @param array  $data
+     * @param array $data
      * @return AbstractResponse
      */
     protected function populate(AbstractResponse $object, array $data)
@@ -211,10 +211,11 @@ class Client
         if (preg_match('/@var (.+?)(\|null)? /', $comment, $matches)) {
             switch ($matches[1]) {
                 case 'integer':
-                    $value = (int)$value;
+                case 'int':
+                    $value = (int) $value;
                     break;
                 case 'float':
-                    $value = (float)$value;
+                    $value = (float) $value;
                     break;
             }
         }

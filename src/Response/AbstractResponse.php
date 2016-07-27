@@ -8,6 +8,7 @@ abstract class AbstractResponse
      * @var string Исходная строка
      */
     public $source;
+
     /**
      * @var integer Код качества
      *              0 - Исходное значение распознано уверенно. Не требуется ручная проверка

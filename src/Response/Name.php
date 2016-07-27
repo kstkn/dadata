@@ -5,6 +5,21 @@ namespace Dadata\Response;
 class Name extends AbstractResponse
 {
     /**
+     * Пол мужской
+     */
+    const GENDER_MALE = 'М';
+
+    /**
+     * Пол женский
+     */
+    const GENDER_FEMALE = 'Ж';
+
+    /**
+     * Пол не удалось однозначно определить
+     */
+    const GENDER_UNKNOWN = 'НД';
+
+    /**
      * @var string Исходные ФИО одной строкой
      */
     public $source;
@@ -45,10 +60,7 @@ class Name extends AbstractResponse
     public $patronymic;
     
     /**
-     * @var string Пол
-     *             М — мужской;
-     *             Ж — женский;
-     *             НД — не удалось однозначно определить.
+     * @var string Пол (see GENDER_* constants)
      */
     public $gender;
 }

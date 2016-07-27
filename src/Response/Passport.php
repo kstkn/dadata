@@ -40,7 +40,7 @@ class Passport extends AbstractResponse
     public $number;
     
     /**
-     * @var integer Код качества паспорта, см. константы QC_*
+     * @var integer Код качества паспорта (see QC_* constants)
      */
     public $qc;
 }
