@@ -34,4 +34,5 @@ $response = $client->cleanPhone('тел 7165219 доб139');
 $response = $client->cleanPassport('4509 235857');
 $response = $client->cleanName('Срегей владимерович иванов');
 $response = $client->cleanEmail('serega@yandex/ru');
+$response = $client->cleanDate('24/3/12');
 ```
