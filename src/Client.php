@@ -177,7 +177,7 @@ class Client
      */
     public function cleanDate($date)
     {
-        $response = $this->query($this->prepareUri('clean/email'), [$date]);
+        $response = $this->query($this->prepareUri('clean/birthdate'), [$date]);
         $result = $this->populate(new Date, $response);
         if (!$result instanceof Date) {
             throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Date::class);
