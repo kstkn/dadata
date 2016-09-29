@@ -33,4 +33,9 @@ class Date extends AbstractResponse
      * @var integer Код проверки (see QC_* constants)
      */
     public $qc;
+
+    public function __toString()
+    {
+        return (string) $this->birthdate;
+    }
 }

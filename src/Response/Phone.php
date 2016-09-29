@@ -61,4 +61,9 @@ class Phone extends AbstractResponse
      *              3	Регионы адреса и телефона отличаются
      */
     public $qc_conflict;
+
+    public function __toString()
+    {
+        return (string) $this->phone;
+    }
 }

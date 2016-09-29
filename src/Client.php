@@ -11,6 +11,10 @@ use Dadata\Response\Passport;
 use Dadata\Response\Phone;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Client as HttpClient;
+use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionProperty;
+use RuntimeException;
 
 /**
  * Class Client
@@ -69,13 +73,18 @@ class Client
      * @param string $address
      *
      * @return Address
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function cleanAddress($address)
     {
         $response = $this->query($this->prepareUri('clean/address'), [$address]);
-        return $this->populate(new Address(), $response);
+        $result = $this->populate(new Address, $response);
+        if (!$result instanceof Address) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Address::class);
+        }
+
+        return $result;
     }
 
     /**
@@ -84,13 +93,17 @@ class Client
      * @param string $phone
      *
      * @return Phone
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function cleanPhone($phone)
     {
         $response = $this->query($this->prepareUri('clean/phone'), [$phone]);
-        return $this->populate(new Phone(), $response);
+        $result = $this->populate(new Phone, $response);
+        if (!$result instanceof Phone) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Phone::class);
+        }
+        return $result;
     }
 
     /**
@@ -99,13 +112,18 @@ class Client
      * @param string $passport
      *
      * @return Passport
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function cleanPassport($passport)
     {
         $response = $this->query($this->prepareUri('clean/passport'), [$passport]);
-        return $this->populate(new Passport(), $response);
+        $result = $this->populate(new Passport(), $response);
+        if (!$result instanceof Passport) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Passport::class);
+        }
+
+        return $result;
     }
 
     /**
@@ -114,13 +132,18 @@ class Client
      * @param string $name
      *
      * @return Name
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function cleanName($name)
     {
         $response = $this->query($this->prepareUri('clean/name'), [$name]);
-        return $this->populate(new Name(), $response);
+        $result = $this->populate(new Name(), $response);
+        if (!$result instanceof Name) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Name::class);
+        }
+
+        return $result;
     }
 
     /**
@@ -129,13 +152,18 @@ class Client
      * @param string $email
      *
      * @return Email
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function cleanEmail($email)
     {
         $response = $this->query($this->prepareUri('clean/email'), [$email]);
-        return $this->populate(new Email, $response);
+        $result = $this->populate(new Email, $response);
+        if (!$result instanceof Email) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Email::class);
+        }
+
+        return $result;
     }
 
     /**
@@ -144,21 +172,26 @@ class Client
      * @param string $date
      *
      * @return Date
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function cleanDate($date)
     {
         $response = $this->query($this->prepareUri('clean/email'), [$date]);
-        return $this->populate(new Date, $response);
+        $result = $this->populate(new Date, $response);
+        if (!$result instanceof Date) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Date::class);
+        }
+
+        return $result;
     }
 
     /**
      * Gets balance.
      *
      * @return float
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     public function getBalance()
     {
@@ -175,8 +208,8 @@ class Client
      * @param string $method
      *
      * @return array
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
     protected function query($uri, array $params = [], $method = self::METHOD_POST)
     {
@@ -190,8 +223,12 @@ class Client
 
         $result = json_decode($response->getBody(), true);
 
-        if (null === $result || !is_array($result)) {
-            throw new \RuntimeException('Empty result');
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new RuntimeException('Error parsing response: ' . json_last_error_msg());
+        }
+
+        if (empty($result)) {
+            throw new RuntimeException('Empty result');
         }
 
         return array_shift($result);
@@ -217,13 +254,13 @@ class Client
      */
     protected function populate(AbstractResponse $object, array $data)
     {
-        $reflect = new \ReflectionClass($object);
+        $reflect = new ReflectionClass($object);
 
-        $properties = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC);
+        $properties = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
 
         foreach ($properties as $property) {
             if (array_key_exists($property->name, $data)) {
-                $object->{$property->name} = $this->getValueWithCorrectType($property, $data[$property->name]);
+                $object->{$property->name} = $this->getValueByAnnotatedType($property, $data[$property->name]);
             }
         }
 
@@ -233,11 +270,11 @@ class Client
     /**
      * Guesses and converts property type by phpdoc comment.
      *
-     * @param \ReflectionProperty $property
+     * @param ReflectionProperty $property
      * @param  mixed $value
      * @return mixed
      */
-    protected function getValueWithCorrectType(\ReflectionProperty $property, $value)
+    protected function getValueByAnnotatedType(ReflectionProperty $property, $value)
     {
         $comment = $property->getDocComment();
         if (preg_match('/@var (.+?)(\|null)? /', $comment, $matches)) {

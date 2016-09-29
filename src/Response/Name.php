@@ -63,4 +63,9 @@ class Name extends AbstractResponse
      * @var string Пол (see GENDER_* constants)
      */
     public $gender;
+
+    public function __toString()
+    {
+        return (string) $this->result;
+    }
 }

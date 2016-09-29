@@ -43,4 +43,9 @@ class Passport extends AbstractResponse
      * @var integer Код качества паспорта (see QC_* constants)
      */
     public $qc;
+
+    public function __toString()
+    {
+        return implode(' ', [$this->series, $this->number]);
+    }
 }
