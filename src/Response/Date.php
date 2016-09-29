@@ -28,11 +28,6 @@ class Date extends AbstractResponse
      * @var string Стандартизованная дата
      */
     public $birthdate;
-    
-    /**
-     * @var integer Код проверки (see QC_* constants)
-     */
-    public $qc;
 
     public function __toString()
     {

@@ -165,7 +165,6 @@ class Address extends AbstractResponse
      */
     const QC_COMPLETE_LOW = 10;
 
-
     /**
      * Дом найден в ФИАС по точному совпадению
      */
@@ -192,17 +191,17 @@ class Address extends AbstractResponse
     public $source;
 
     /**
-     * @var string|null Стандартизованный адрес одной строкой
+     * @var string Стандартизованный адрес одной строкой
      */
     public $result;
 
     /**
-     * @var string|null Индекс
+     * @var string Индекс
      */
     public $postal_code;
 
     /**
-     * @var string|null Страна
+     * @var string Страна
      */
     public $country;
 
@@ -222,17 +221,17 @@ class Address extends AbstractResponse
     public $region_with_type;
 
     /**
-     * @var string|null Тип региона (сокращенный)
+     * @var string Тип региона (сокращенный)
      */
     public $region_type;
 
     /**
-     * @var string|null Тип региона
+     * @var string Тип региона
      */
     public $region_type_full;
 
     /**
-     * @var string|null Регион
+     * @var string Регион
      */
     public $region;
 
@@ -252,17 +251,17 @@ class Address extends AbstractResponse
     public $area_with_type;
 
     /**
-     * @var string|null Тип района в регионе (сокращенный)
+     * @var string Тип района в регионе (сокращенный)
      */
     public $area_type;
 
     /**
-     * @var string|null Тип района в регионе
+     * @var string Тип района в регионе
      */
     public $area_type_full;
 
     /**
-     * @var string|null Район в регионе
+     * @var string Район в регионе
      */
     public $area;
 
@@ -282,17 +281,17 @@ class Address extends AbstractResponse
     public $city_with_type;
 
     /**
-     * @var string|null Тип города (сокращенный)
+     * @var string Тип города (сокращенный)
      */
     public $city_type;
 
     /**
-     * @var string|null Тип города
+     * @var string Тип города
      */
     public $city_type_full;
 
     /**
-     * @var string|null Город
+     * @var string Город
      */
     public $city;
 
@@ -347,17 +346,17 @@ class Address extends AbstractResponse
     public $settlement_with_type;
 
     /**
-     * @var string|null Тип населенного пункта (сокращенный)
+     * @var string Тип населенного пункта (сокращенный)
      */
     public $settlement_type;
 
     /**
-     * @var string|null Тип населенного пункта
+     * @var string Тип населенного пункта
      */
     public $settlement_type_full;
 
     /**
-     * @var string|null Населенный пункт
+     * @var string Населенный пункт
      */
     public $settlement;
 
@@ -377,17 +376,17 @@ class Address extends AbstractResponse
     public $street_with_type;
 
     /**
-     * @var string|null Тип улицы (сокращенный)
+     * @var string Тип улицы (сокращенный)
      */
     public $street_type;
 
     /**
-     * @var string|null Тип улицы
+     * @var string Тип улицы
      */
     public $street_type_full;
 
     /**
-     * @var string|null Улица
+     * @var string Улица
      */
     public $street;
 
@@ -402,72 +401,72 @@ class Address extends AbstractResponse
     public $house_kladr_id;
 
     /**
-     * @var string|null Тип дома (сокращенный)
+     * @var string Тип дома (сокращенный)
      */
     public $house_type;
 
     /**
-     * @var string|null Тип дома
+     * @var string Тип дома
      */
     public $house_type_full;
 
     /**
-     * @var string|null Дом
+     * @var string Дом
      */
     public $house;
 
     /**
-     * @var string|null Тип корпуса/строения (сокращенный)
+     * @var string Тип корпуса/строения (сокращенный)
      */
     public $block_type;
 
     /**
-     * @var string|null Тип корпуса/строения
+     * @var string Тип корпуса/строения
      */
     public $block_type_full;
 
     /**
-     * @var string|null Корпус/строение
+     * @var string Корпус/строение
      */
     public $block;
 
     /**
-     * @var string|null Тип квартиры (сокращенный)
+     * @var string Тип квартиры (сокращенный)
      */
     public $flat_type;
 
     /**
-     * @var string|null Тип квартиры
+     * @var string Тип квартиры
      */
     public $flat_type_full;
 
     /**
-     * @var string|null Квартира
+     * @var string Квартира
      */
     public $flat;
 
     /**
-     * @var float|null Площадь квартиры
+     * @var float Площадь квартиры
      */
     public $flat_area;
 
     /**
-     * @var string|null Рыночная стоимость м²
+     * @var string Рыночная стоимость м²
      */
     public $square_meter_price;
 
     /**
-     * @var string|null Рыночная стоимость квартиры
+     * @var string Рыночная стоимость квартиры
      */
     public $flat_price;
 
     /**
-     * @var string|null Абонентский ящик
+     * @var string Абонентский ящик
      */
     public $postal_box;
 
     /**
-     * @var string|null Код ФИАС:
+     * @var string Код ФИАС:
      *                  HOUSE.HOUSEGUID, если дом найден в ФИАС по точному совпадению;
      *                  HOUSEINT.INTGUID, если дом найден в ФИАС как часть интервала;
      *                  ADDROBJ.AOGUID в противном случае.
@@ -475,68 +474,68 @@ class Address extends AbstractResponse
     public $fias_id;
 
     /**
-     * @var integer Уровень детализации, до которого адрес найден в ФИАС (see constants FIAS_*)
+     * @var integer Уровень детализации, до которого адрес найден в ФИАС (see FIAS_* constants)
      */
     public $fias_level;
 
     /**
-     * @var string|null Код КЛАДР
+     * @var string Код КЛАДР
      */
     public $kladr_id;
 
     /**
-     * @var integer Является ли город центром (see constants CAPITAL_MARKER_*):
+     * @var integer Является ли город центром (see CAPITAL_MARKER_* constants):
      */
     public $capital_marker;
 
     /**
-     * @var string|null Код ОКАТО
+     * @var string Код ОКАТО
      */
     public $okato;
 
     /**
-     * @var string|null Код ОКТМО
+     * @var string Код ОКТМО
      */
     public $oktmo;
 
     /**
-     * @var string|null Код ИФНС для физических лиц
+     * @var string Код ИФНС для физических лиц
      */
     public $tax_office;
 
     /**
-     * @var string|null Код ИФНС для организаций (не заполняется)
+     * @var string Код ИФНС для организаций (не заполняется)
      */
     public $tax_office_legal;
 
     /**
-     * @var string|null Часовой пояс
+     * @var string Часовой пояс
      */
     public $timezone;
 
     /**
-     * @var float|null Координаты: широта
+     * @var float Координаты: широта
      */
     public $geo_lat;
 
     /**
-     * @var float|null Координаты: долгота
+     * @var float Координаты: долгота
      */
     public $geo_lon;
 
     /**
-     * @var string|null Внутри кольцевой? BELTWAY_HIT_* constants
+     * @var string Внутри кольцевой? (see BELTWAY_HIT_* constants)
      */
     public $beltway_hit;
 
     /**
-     * @var int|null Расстояние от кольцевой в км.
+     * @var int Расстояние от кольцевой в км.
      *               Заполнено, только если beltway_hit = OUT_MKAD или OUT_KAD, иначе пустое.
      */
     public $beltway_distance;
 
     /**
-     * @var integer Код точности координат (see constants QC_GEO_*)
+     * @var integer Код точности координат (see QC_GEO_* constants)
      */
     public $qc_geo;
 

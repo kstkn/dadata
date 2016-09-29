@@ -38,11 +38,6 @@ class Passport extends AbstractResponse
      * @var string Номер
      */
     public $number;
-    
-    /**
-     * @var integer Код качества паспорта (see QC_* constants)
-     */
-    public $qc;
 
     public function __toString()
     {

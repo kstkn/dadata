@@ -5,6 +5,21 @@ namespace Dadata\Response;
 class Name extends AbstractResponse
 {
     /**
+     * Исходное значение распознано уверенно
+     */
+    const QC_OK = 0;
+
+    /**
+     * Исходное значение распознано с допущениями или не распознано
+     */
+    const QC_INVALID = 1;
+
+    /**
+     * Исходное значение пустое или заведомо «мусорное»
+     */
+    const QC_EMPTY = 2;
+
+    /**
      * Пол мужской
      */
     const GENDER_MALE = 'М';

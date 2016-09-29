@@ -42,11 +42,6 @@ class Email extends AbstractResponse
      * @var string Стандартизованный email
      */
     public $email;
-    
-    /**
-     * @var integer Код проверки (see QC_* constants)
-     */
-    public $qc;
 
     public function __toString()
     {
