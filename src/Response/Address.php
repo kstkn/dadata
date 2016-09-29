@@ -207,6 +207,21 @@ class Address extends AbstractResponse
     public $country;
 
     /**
+     * @var string Код ФИАС региона
+     */
+    public $region_fias_id;
+
+    /**
+     * @var string Код КЛАДР региона
+     */
+    public $region_kladr_id;
+
+    /**
+     * @var string Регион с типом
+     */
+    public $region_with_type;
+
+    /**
      * @var string|null Тип региона (сокращенный)
      */
     public $region_type;
@@ -220,6 +235,21 @@ class Address extends AbstractResponse
      * @var string|null Регион
      */
     public $region;
+
+    /**
+     * @var string Код ФИАС района в регионе
+     */
+    public $area_fias_id;
+
+    /**
+     * @var string Код КЛАДР района в регионе
+     */
+    public $area_kladr_id;
+
+    /**
+     * @var string Район в регионе с типом
+     */
+    public $area_with_type;
 
     /**
      * @var string|null Тип района в регионе (сокращенный)
@@ -237,6 +267,21 @@ class Address extends AbstractResponse
     public $area;
 
     /**
+     * @var string Код ФИАС города
+     */
+    public $city_fias_id;
+
+    /**
+     * @var string Код КЛАДР города
+     */
+    public $city_kladr_id;
+
+    /**
+     * @var string Город с типом
+     */
+    public $city_with_type;
+
+    /**
      * @var string|null Тип города (сокращенный)
      */
     public $city_type;
@@ -250,6 +295,56 @@ class Address extends AbstractResponse
      * @var string|null Город
      */
     public $city;
+
+    /**
+     * @var string Административный округ (только для Москвы)
+     */
+    public $city_area;
+
+    /**
+     * @var string Код ФИАС района города (не заполняется)
+     */
+    public $city_district_fias_id;
+
+    /**
+     * @var string Код КЛАДР района города (не заполняется)
+     */
+    public $city_district_kladr_id;
+
+    /**
+     * @var string Район города с типом
+     */
+    public $city_district_with_type;
+
+    /**
+     * @var string Тип района города (сокращенный)
+     */
+    public $city_district_type;
+
+    /**
+     * @var string Тип района города
+     */
+    public $city_district_type_full;
+
+    /**
+     * @var string Район города
+     */
+    public $city_district;
+
+    /**
+     * @var string Код ФИАС нас. пункта
+     */
+    public $settlement_fias_id;
+
+    /**
+     * @var string Код КЛАДР нас. пункта
+     */
+    public $settlement_kladr_id;
+
+    /**
+     * @var string Населенный пункт с типом
+     */
+    public $settlement_with_type;
 
     /**
      * @var string|null Тип населенного пункта (сокращенный)
@@ -267,9 +362,19 @@ class Address extends AbstractResponse
     public $settlement;
 
     /**
-     * @var string|null Район города
+     * @var string Код ФИАС улицы
      */
-    public $city_district;
+    public $street_fias_id;
+
+    /**
+     * @var string Код КЛАДР улицы
+     */
+    public $street_kladr_id;
+
+    /**
+     * @var string Улица с типом
+     */
+    public $street_with_type;
 
     /**
      * @var string|null Тип улицы (сокращенный)
@@ -285,6 +390,16 @@ class Address extends AbstractResponse
      * @var string|null Улица
      */
     public $street;
+
+    /**
+     * @var string Код ФИАС дома
+     */
+    public $house_fias_id;
+
+    /**
+     * @var string Код КЛАДР дома
+     */
+    public $house_kladr_id;
 
     /**
      * @var string|null Тип дома (сокращенный)
