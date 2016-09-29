@@ -4,6 +4,7 @@ namespace Dadata;
 
 use Dadata\Response\AbstractResponse;
 use Dadata\Response\Address;
+use Dadata\Response\Email;
 use Dadata\Response\Name;
 use Dadata\Response\Passport;
 use Dadata\Response\Phone;
@@ -119,6 +120,21 @@ class Client
     {
         $response = $this->query($this->prepareUri('clean/name'), [$name]);
         return $this->populate(new Name(), $response);
+    }
+
+    /**
+     * Cleans email.
+     *
+     * @param string $email
+     *
+     * @return Email
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     */
+    public function cleanEmail($email)
+    {
+        $response = $this->query($this->prepareUri('clean/email'), [$email]);
+        return $this->populate(new Email, $response);
     }
 
     /**
