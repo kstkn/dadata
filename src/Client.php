@@ -9,8 +9,8 @@ use Dadata\Response\Email;
 use Dadata\Response\Name;
 use Dadata\Response\Passport;
 use Dadata\Response\Phone;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Client as HttpClient;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionProperty;
@@ -42,24 +42,28 @@ class Client
      * @var string
      */
     protected $version = 'v2';
+
     /**
      * @var string
      */
     protected $baseUrl = 'https://dadata.ru/api';
+
     /**
      * @var string
      */
     protected $token;
+
     /**
      * @var string
      */
     protected $secret;
+
     /**
-     * @var HttpClient
+     * @var ClientInterface
      */
     protected $httpClient;
 
-    public function __construct(HttpClient $httpClient, array $config = [])
+    public function __construct(ClientInterface $httpClient, array $config = [])
     {
         $this->httpClient = $httpClient;
         foreach ($config as $name => $value) {
