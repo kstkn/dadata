@@ -9,6 +9,7 @@ use Dadata\Response\Email;
 use Dadata\Response\Name;
 use Dadata\Response\Passport;
 use Dadata\Response\Phone;
+use Dadata\Response\Vehicle;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Request;
 use InvalidArgumentException;
@@ -185,6 +186,26 @@ class Client
         $result = $this->populate(new Date, $response);
         if (!$result instanceof Date) {
             throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Date::class);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Cleans vehicle.
+     *
+     * @param string $vehicle
+     *
+     * @return Vehicle
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
+     */
+    public function cleanVehicle($vehicle)
+    {
+        $response = $this->query($this->prepareUri('clean/vehicle'), [$vehicle]);
+        $result = $this->populate(new Vehicle, $response);
+        if (!$result instanceof Vehicle) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Vehicle::class);
         }
 
         return $result;
