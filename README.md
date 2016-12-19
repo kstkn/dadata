@@ -1,7 +1,7 @@
 Dadata API client
 =================
 
-A PHP library for the DaData.ru REST API
+Non-official PHP library for the DaData.ru REST API
 
 [![Latest Stable Version](https://poser.pugx.org/gietos/dadata/version)](https://packagist.org/packages/gietos/dadata)
 [![Total Downloads](https://poser.pugx.org/gietos/dadata/downloads)](https://packagist.org/packages/gietos/dadata)
