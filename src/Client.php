@@ -320,7 +320,12 @@ class Client
         return $value;
     }
 
-    public function detectAddressByIp(string $ip): Address
+    /**
+     * @param string $ip
+     * @return null|Address
+     * @throws Exception
+     */
+    public function detectAddressByIp($ip)
     {
         $request = new Request('get', $this->baseUrlGeolocation . '?ip=' . $ip, [
             'Accept'  => 'application/json',
@@ -331,8 +336,16 @@ class Client
 
         $result = json_decode($response->getBody(), true);
 
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new RuntimeException('Error parsing response: ' . json_last_error_msg());
+        }
+
         if (!array_key_exists('location', $result)) {
             throw new Exception('Required key "location" is missing');
+        }
+
+        if (null === $result['location']) {
+            return null;
         }
 
         if (!array_key_exists('data', $result['location'])) {
