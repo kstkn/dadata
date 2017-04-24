@@ -10,6 +10,7 @@ use Dadata\Response\Name;
 use Dadata\Response\Passport;
 use Dadata\Response\Phone;
 use Dadata\Response\Vehicle;
+use Exception;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Request;
 use InvalidArgumentException;
@@ -48,6 +49,8 @@ class Client
      * @var string
      */
     protected $baseUrl = 'https://dadata.ru/api';
+
+    protected $baseUrlGeolocation = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/detectAddressByIp';
 
     /**
      * @var string
@@ -315,5 +318,32 @@ class Client
         }
 
         return $value;
+    }
+
+    public function detectAddressByIp(string $ip): Address
+    {
+        $request = new Request('get', $this->baseUrlGeolocation . '?ip=' . $ip, [
+            'Accept'  => 'application/json',
+            'Authorization' => 'Token ' . $this->token,
+        ]);
+
+        $response = $this->httpClient->send($request);
+
+        $result = json_decode($response->getBody(), true);
+
+        if (!array_key_exists('location', $result)) {
+            throw new Exception('Required key "location" is missing');
+        }
+
+        if (!array_key_exists('data', $result['location'])) {
+            throw new Exception('Required key "data" is missing');
+        }
+
+        $address = $this->populate(new Address, $result['location']['data']);
+        if (!$address instanceof Address) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Address::class);
+        }
+
+        return $address;
     }
 }
