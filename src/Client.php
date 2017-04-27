@@ -352,6 +352,10 @@ class Client
             throw new Exception('Required key "data" is missing');
         }
 
+        if (null === $result['location']['data']) {
+            return null;
+        }
+
         $address = $this->populate(new Address, $result['location']['data']);
         if (!$address instanceof Address) {
             throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Address::class);
