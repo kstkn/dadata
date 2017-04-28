@@ -67,6 +67,11 @@ class Client
      */
     protected $httpClient;
 
+    /**
+     * @var array
+     */
+    protected $httpOptions;
+
     public function __construct(ClientInterface $httpClient, array $config = [])
     {
         $this->httpClient = $httpClient;
@@ -247,7 +252,7 @@ class Client
             'X-Secret'      => $this->secret,
         ], 0 < count($params) ? json_encode($params) : null);
 
-        $response = $this->httpClient->send($request);
+        $response = $this->httpClient->send($request, $this->httpOptions);
 
         $result = json_decode($response->getBody(), true);
 
