@@ -70,7 +70,7 @@ class Client
     /**
      * @var array
      */
-    protected $httpOptions;
+    protected $httpOptions = [];
 
     public function __construct(ClientInterface $httpClient, array $config = [])
     {
