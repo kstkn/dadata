@@ -4,13 +4,13 @@ namespace Dadata;
 
 use Dadata\Response\AbstractResponse;
 use Dadata\Response\Address;
+use Dadata\Response\CompositeResponse;
 use Dadata\Response\Date;
 use Dadata\Response\Email;
 use Dadata\Response\Name;
 use Dadata\Response\Passport;
 use Dadata\Response\Phone;
 use Dadata\Response\Vehicle;
-use Dadata\Response\Suggestions\Party;
 use Exception;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Request;
@@ -36,11 +36,11 @@ class Client
      * Исходное значение пустое или заведомо "мусорное"
      */
     const QC_INVALID = 2;
-    
+
     const METHOD_GET = 'GET';
-    
+
     const METHOD_POST = 'POST';
-    
+
     /**
      * @var string
      */
@@ -51,11 +51,7 @@ class Client
      */
     protected $baseUrl = 'https://dadata.ru/api';
 
-    /**
-     * Suggestions url
-     * @var string
-     */
-    protected $baseSuggestionsUrl = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/';
+    protected $baseUrlGeolocation = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/detectAddressByIp';
 
     /**
      * @var string
@@ -72,11 +68,6 @@ class Client
      */
     protected $httpClient;
 
-    /**
-     * @var array
-     */
-    protected $httpOptions = [];
-
     public function __construct(ClientInterface $httpClient, array $config = [])
     {
         $this->httpClient = $httpClient;
@@ -86,20 +77,98 @@ class Client
     }
 
     /**
+     * @param string|null $phone
+     * @param string|null $name
+     * @param string|null $address
+     * @param string|null $email
+     * @param string|null $passport
+     * @param string|null $vehicle
+     * @return CompositeResponse
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     */
+    public function cleanCompositeRecord(string $phone = null, string $name = null, string $address = null, string $email = null, string $passport = null, string $vehicle = null): CompositeResponse
+    {
+        $arCompositeData = [];
+        $arCompositeStructure = [];
+        if ($phone !== null) {
+            $arCompositeData[] = $phone;
+            $arCompositeStructure[] = 'PHONE';
+        }
+        if ($name !== null) {
+            $arCompositeData[] = $name;
+            $arCompositeStructure[] = 'NAME';
+        }
+        if ($address !== null) {
+            $arCompositeData[] = $address;
+            $arCompositeStructure[] = 'ADDRESS';
+        }
+        if ($email !== null) {
+            $arCompositeData[] = $email;
+            $arCompositeStructure[] = 'EMAIL';
+        }
+        if ($passport !== null) {
+            $arCompositeData[] = $passport;
+            $arCompositeStructure[] = 'PASSPORT';
+        }
+        if ($vehicle !== null) {
+            $arCompositeData[] = $vehicle;
+            $arCompositeStructure[] = 'VEHICLE';
+        }
+
+        $arCompositeItem = [
+            'structure' => $arCompositeStructure,
+            'data' => [$arCompositeData],
+
+        ];
+
+        $response = $this->query($this->prepareUri('clean'), $arCompositeItem, self::METHOD_POST, true);
+
+        $compositeResponse = new CompositeResponse();
+        foreach ((array)$response['structure'] as $itemOffset => $itemCode) {
+            switch ($itemCode) {
+                case 'PHONE':
+                    $compositeResponse->setPhone($this->populate(new Phone, (array)$response['data'][0][$itemOffset]));
+                    break;
+                case 'NAME':
+                    $compositeResponse->setName($this->populate(new Name, (array)$response['data'][0][$itemOffset]));
+                    break;
+                case 'ADDRESS':
+                    $compositeResponse->setAddress($this->populate(new Address, (array)$response['data'][0][$itemOffset]));
+                    break;
+                case 'EMAIL':
+                    $compositeResponse->setEmail($this->populate(new Email, (array)$response['data'][0][$itemOffset]));
+                    break;
+                case 'PASSPORT':
+                    $compositeResponse->setPassport($this->populate(new Passport, (array)$response['data'][0][$itemOffset]));
+                    break;
+                case 'VEHICLE':
+                    $compositeResponse->setVehicle($this->populate(new Vehicle, (array)$response['data'][0][$itemOffset]));
+                    break;
+                default:
+                    throw new \RuntimeException(sprintf('Unexpected response type [%s] ', $itemCode));
+                    break;
+            }
+        }
+        return $compositeResponse;
+    }
+
+    /**
      * Cleans address.
      *
      * @param string $address
      *
      * @return Address
-     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
     public function cleanAddress($address)
     {
         $response = $this->query($this->prepareUri('clean/address'), [$address]);
-        /** @var Address $result */
         $result = $this->populate(new Address, $response);
+        if (!$result instanceof Address) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result) . '. Expected: ' . Address::class);
+        }
 
         return $result;
     }
@@ -110,16 +179,16 @@ class Client
      * @param string $phone
      *
      * @return Phone
-     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
     public function cleanPhone($phone)
     {
         $response = $this->query($this->prepareUri('clean/phone'), [$phone]);
-        /** @var Phone $result */
         $result = $this->populate(new Phone, $response);
-
+        if (!$result instanceof Phone) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result) . '. Expected: ' . Phone::class);
+        }
         return $result;
     }
 
@@ -129,15 +198,16 @@ class Client
      * @param string $passport
      *
      * @return Passport
-     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
     public function cleanPassport($passport)
     {
         $response = $this->query($this->prepareUri('clean/passport'), [$passport]);
-        /** @var Passport $result */
         $result = $this->populate(new Passport(), $response);
+        if (!$result instanceof Passport) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result) . '. Expected: ' . Passport::class);
+        }
 
         return $result;
     }
@@ -148,15 +218,16 @@ class Client
      * @param string $name
      *
      * @return Name
-     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
     public function cleanName($name)
     {
         $response = $this->query($this->prepareUri('clean/name'), [$name]);
-        /** @var Name $result */
         $result = $this->populate(new Name(), $response);
+        if (!$result instanceof Name) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result) . '. Expected: ' . Name::class);
+        }
 
         return $result;
     }
@@ -167,15 +238,16 @@ class Client
      * @param string $email
      *
      * @return Email
-     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
     public function cleanEmail($email)
     {
         $response = $this->query($this->prepareUri('clean/email'), [$email]);
-        /** @var Email $result */
         $result = $this->populate(new Email, $response);
+        if (!$result instanceof Email) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result) . '. Expected: ' . Email::class);
+        }
 
         return $result;
     }
@@ -186,15 +258,16 @@ class Client
      * @param string $date
      *
      * @return Date
-     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
     public function cleanDate($date)
     {
         $response = $this->query($this->prepareUri('clean/birthdate'), [$date]);
-        /** @var Date $result */
         $result = $this->populate(new Date, $response);
+        if (!$result instanceof Date) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result) . '. Expected: ' . Date::class);
+        }
 
         return $result;
     }
@@ -205,15 +278,16 @@ class Client
      * @param string $vehicle
      *
      * @return Vehicle
-     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
     public function cleanVehicle($vehicle)
     {
         $response = $this->query($this->prepareUri('clean/vehicle'), [$vehicle]);
-        /** @var Vehicle $result */
         $result = $this->populate(new Vehicle, $response);
+        if (!$result instanceof Vehicle) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result) . '. Expected: ' . Vehicle::class);
+        }
 
         return $result;
     }
@@ -228,14 +302,14 @@ class Client
     public function getBalance()
     {
         $response = $this->query($this->prepareUri('profile/balance'), [], self::METHOD_GET);
-        return (double) $response;
+        return (double)$response;
     }
 
     /**
      * Requests API.
      *
      * @param string $uri
-     * @param array  $params
+     * @param array $params
      *
      * @param string $method
      *
@@ -243,15 +317,16 @@ class Client
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
-    protected function query($uri, array $params = [], $method = self::METHOD_POST)
+    protected function query($uri, array $params = [], $method = self::METHOD_POST, bool $isCompositeRequest = false)
     {
         $request = new Request($method, $uri, [
-            'Content-Type'  => 'application/json',
+            'Content-Type' => 'application/json',
             'Authorization' => 'Token ' . $this->token,
-            'X-Secret'      => $this->secret,
+            'X-Secret' => $this->secret,
         ], 0 < count($params) ? json_encode($params) : null);
 
-        $response = $this->httpClient->send($request, $this->httpOptions);
+        $response = $this->httpClient->send($request);
+
 
         $result = json_decode($response->getBody(), true);
 
@@ -263,6 +338,9 @@ class Client
             throw new RuntimeException('Empty result');
         }
 
+        if ($isCompositeRequest) {
+            return $result;
+        }
         return array_shift($result);
     }
 
@@ -281,10 +359,8 @@ class Client
      * Populates object with data.
      *
      * @param AbstractResponse $object
-     * @param array            $data
-     *
+     * @param array $data
      * @return AbstractResponse
-     * @throws \ReflectionException
      */
     protected function populate(AbstractResponse $object, array $data)
     {
@@ -302,52 +378,6 @@ class Client
     }
 
     /**
-     * Создаем объект ответа по подсказкам организации
-     *
-     * @param array $response
-     *
-     * @return Party\Party
-     * @throws \ReflectionException
-     */
-    protected function populateParty (array $response)
-    {
-        list($name, $post) = array_values($response['data']['management']);
-        $management = new Party\ManagementDto($name, $post);
-
-        list($code, $full, $short) = array_values($response['data']['opf']);
-        $opf = new Party\OpfDto($code, $full, $short);
-
-        list($fullWithOpf, $shortWithOpf, $latin, $full, $short) = array_values($response['data']['name']);
-        $name = new Party\NameDto($fullWithOpf, $shortWithOpf, $latin, $full, $short);
-
-        list($status, $actualityDate, $registrationDate, $liquidationDate) = array_values($response['data']['state']);
-        $state = new Party\StateDto($status, $actualityDate, $registrationDate, $liquidationDate);
-
-        list($value, $unrestrictedValue) = array_values($response['data']['address']);
-        $simpleAddress = new Party\AddressDto($value, $unrestrictedValue);
-
-        $address = $this->populate(new Address(), $response['data']['address']['data']);
-
-        return new Party\Party(
-            $response['value'],
-            $response['unrestricted_value'],
-            $response['data']['kpp'],
-            $management,
-            $response['data']['branch_type'],
-            $response['data']['type'],
-            $opf,
-            $name,
-            $response['data']['inn'],
-            $response['data']['ogrn'],
-            $response['data']['okpo'],
-            $response['data']['okved'],
-            $state,
-            $simpleAddress,
-            $address
-        );
-    }
-
-    /**
      * Guesses and converts property type by phpdoc comment.
      *
      * @param ReflectionProperty $property
@@ -361,10 +391,10 @@ class Client
             switch ($matches[1]) {
                 case 'integer':
                 case 'int':
-                    $value = (int) $value;
+                    $value = (int)$value;
                     break;
                 case 'float':
-                    $value = (float) $value;
+                    $value = (float)$value;
                     break;
             }
         }
@@ -379,8 +409,8 @@ class Client
      */
     public function detectAddressByIp($ip)
     {
-        $request = new Request('get', $this->baseSuggestionsUrl . 'detectAddressByIp' . '?ip=' . $ip, [
-            'Accept'  => 'application/json',
+        $request = new Request('get', $this->baseUrlGeolocation . '?ip=' . $ip, [
+            'Accept' => 'application/json',
             'Authorization' => 'Token ' . $this->token,
         ]);
 
@@ -404,83 +434,11 @@ class Client
             throw new Exception('Required key "data" is missing');
         }
 
-        if (null === $result['location']['data']) {
-            return null;
-        }
-
-        /** @var Address $address */
         $address = $this->populate(new Address, $result['location']['data']);
+        if (!$address instanceof Address) {
+            throw new RuntimeException('Unexpected populate result: ' . get_class($result) . '. Expected: ' . Address::class);
+        }
 
         return $address;
     }
-
-    /**
-     * Метод возвращает арес по его коду КЛАДР или ФИАС
-     *
-     * Dadata comment: Ищет до улицы включительно, при поиске по коду дома возвращает пустой ответ.
-     * Так сделано намеренно: КЛАДР-коды и ФИАС-коды домов постоянно изменяются, поэтому хранить их ненадежно.
-     * Рекомендуем использовать связку «ФИАС-код улицы + домовая часть отдельно»
-     *
-     * @param string $addressId
-     *
-     * @return AbstractResponse|Address|null
-     * @throws \ReflectionException
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
-     */
-    public function getAddressById($addressId)
-    {
-        $response = $this->query($this->baseSuggestionsUrl . 'findById/address', ['query' => $addressId]);
-
-        if (is_array($response) && 0 < count($response)) {
-            /** @var Address $address */
-            $address = $this->populate(new Address, array_shift($response)['data']);
-
-            return $address;
-        }
-
-        return null;
-    }
-
-    /**
-     * Ищет организации и индивидуальных предпринимателей:
-     * по ИНН / ОГРН;
-     * названию (полному, краткому, латинскому);
-     * ФИО (для индивидуальных предпринимателей);
-     * ФИО руководителя компании;
-     * адресу до улицы.
-     *
-     * @param $party
-     *
-     * @return \SplObjectStorage
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \ReflectionException
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
-     */
-    public function suggestParties($party)
-    {
-        $response = $this->query($this->prepareSuggestionsUri('suggest/party'), ['query' => $party]);
-        $collection = new \SplObjectStorage();
-
-        foreach ($response as $arParty) {
-            $party = $this->populateParty($arParty);
-            $collection->attach($party);
-        }
-        return $collection;
-    }
-
-    /**
-     * Prepares suggest URI for the request.
-     *
-     * @param string $endpoint
-     *
-     * @return string
-     */
-    protected function prepareSuggestionsUri($endpoint)
-    {
-        return $this->baseSuggestionsUrl . $endpoint;
-    }
-
-
 }
