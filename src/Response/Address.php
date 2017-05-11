@@ -186,6 +186,21 @@ class Address extends AbstractResponse
     const QC_HOUSE_LOW = 10;
 
     /**
+     * Адрес распознан уверенно, ручная проверка не требуется
+     */
+    const QC_OK = 0;
+
+    /**
+     * Телефон распознан с допущениями или не распознан, требется ручная проверка
+     */
+    const QC_INVALID = 1;
+
+    /**
+     * Адрес пустой или заведомо «мусорный», ручная проверка не требуется
+     */
+    const QC_EMPTY = 2;
+
+    /**
      * @var string Исходный адрес одной строкой
      */
     public $source;
@@ -557,6 +572,6 @@ class Address extends AbstractResponse
 
     public function __toString()
     {
-        return (string) $this->result;
+        return (string)$this->result;
     }
 }

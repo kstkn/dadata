@@ -31,6 +31,46 @@ class CompositeResponse
     protected $vehicle;
 
     /**
+     * все сущности распознаны уверенно, ручная проверка не требуется
+     *
+     * @return bool
+     */
+    public function isAggregateQualityCodeOk(): bool
+    {
+        if ($this->isAddressExists()) {
+            if ($this->getAddress()->qc !== Address::QC_OK) {
+                return false;
+            }
+        }
+        if ($this->isPhoneExists()) {
+            if ($this->getPhone()->qc !== Phone::QC_OK) {
+                return false;
+            }
+        }
+        if ($this->isPassportExists()) {
+            if ($this->getPassport()->qc !== Passport::QC_OK) {
+                return false;
+            }
+        }
+        if ($this->isNameExists()) {
+            if ($this->getName()->qc !== Name::QC_OK) {
+                return false;
+            }
+        }
+        if ($this->isEmailExists()) {
+            if ($this->getEmail()->qc !== Email::QC_OK) {
+                return false;
+            }
+        }
+        if ($this->isVehicleExists()) {
+            if ($this->getVehicle()->qc !== Vehicle::QC_OK) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @return bool
      */
     public function isVehicleExists(): bool
