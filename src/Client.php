@@ -53,7 +53,7 @@ class Client
     /**
      * @var string
      */
-    protected $suggestionsUrl = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/';
+    protected $suggestionsUrl = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs';
 
     protected $baseUrlGeolocation = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/detectAddressByIp';
 
@@ -129,7 +129,6 @@ class Client
         ], 0 < count($params) ? json_encode($params) : null);
 
         $response = $this->httpClient->send($request, $this->httpOptions);
-
         $result = json_decode($response->getBody(), true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -346,7 +345,7 @@ class Client
      *
      * @param $party
      *
-     * @return AbstractResponse
+     * @return \SplObjectStorage
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \ReflectionException
      * @throws \InvalidArgumentException
@@ -354,13 +353,14 @@ class Client
      */
     public function suggestParty($party)
     {
-        $response = $this->query($this->prepareUri('suggest/party'), ['query' => $party]);
-        $result = $this->populate(new Vehicle, $response);
-        if (!$result instanceof Vehicle) {
-            throw new RuntimeException('Unexpected populate result: ' . get_class($result) . '. Expected: ' . Vehicle::class);
-        }
+        $response = $this->query($this->prepareSuggestionsUri('suggest/party'), ['query' => $party]);
+        $collection = new \SplObjectStorage();
 
-        return $result;
+        foreach ($response as $arParty) {
+            $party = Response\Suggestions\Party\Party::populateFromResponse($arParty);
+            $collection->attach($party);
+        }
+        return $collection;
     }
 
     /**

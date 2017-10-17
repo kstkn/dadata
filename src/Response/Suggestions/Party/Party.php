@@ -104,6 +104,49 @@ class Party extends AbstractResponse
     }
 
     /**
+     * Создаем объект ответа по подсказкам организации
+     *
+     * @param array $response
+     *
+     * @return Party
+     */
+    public static function populateFromResponse (array $response)
+    {
+        list($name, $post) = array_values($response['data']['management']);
+        $management = new ManagementDto($name, $post);
+
+        list($code, $full, $short) = array_values($response['data']['opf']);
+        $opf = new OpfDto($code, $full, $short);
+
+        list($fullWithOpf, $shortWithOpf, $latin, $full, $short) = array_values($response['data']['name']);
+        $name = new NameDto($fullWithOpf, $shortWithOpf, $latin, $full, $short);
+
+        list($status, $actualityDate, $registrationDate, $liquidationDate) = array_values($response['data']['state']);
+        $state = new StateDto($status, $actualityDate, $registrationDate, $liquidationDate);
+
+        list($value, $unrestrictedValue) = array_values($response['data']['address']);
+        $address = new AddressDto($value, $unrestrictedValue);
+
+       return new self(
+           $response['value'],
+           $response['unrestricted_value'],
+           $response['data']['kpp'],
+           $management,
+           $response['data']['branch_type'],
+           $response['data']['type'],
+           $opf,
+           $name,
+           $response['data']['inn'],
+           $response['data']['ogrn'],
+           $response['data']['okpo'],
+           $response['data']['okved'],
+           $state,
+           $address
+       );
+    }
+
+
+    /**
      * @return string
      */
     public function getValue()
