@@ -555,6 +555,11 @@ class Address extends AbstractResponse
      */
     public $unparsed_parts;
 
+    /**
+     * @var array Список ближайших станций метро (до трёх штук)
+     */
+    public $metro;
+
     public function __toString()
     {
         return (string) $this->result;
