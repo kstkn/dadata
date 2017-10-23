@@ -50,7 +50,11 @@ class Client
      */
     protected $baseUrl = 'https://dadata.ru/api';
 
-    protected $baseUrlGeolocation = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/detectAddressByIp';
+    /**
+     * Suggestions url
+     * @var string
+     */
+    protected $baseSuggestionsUrl = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/';
 
     /**
      * @var string
@@ -92,10 +96,8 @@ class Client
     public function cleanAddress($address)
     {
         $response = $this->query($this->prepareUri('clean/address'), [$address]);
+        /** @var Address $result */
         $result = $this->populate(new Address, $response);
-        if (!$result instanceof Address) {
-            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Address::class);
-        }
 
         return $result;
     }
@@ -112,10 +114,9 @@ class Client
     public function cleanPhone($phone)
     {
         $response = $this->query($this->prepareUri('clean/phone'), [$phone]);
+        /** @var Phone $result */
         $result = $this->populate(new Phone, $response);
-        if (!$result instanceof Phone) {
-            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Phone::class);
-        }
+
         return $result;
     }
 
@@ -131,10 +132,8 @@ class Client
     public function cleanPassport($passport)
     {
         $response = $this->query($this->prepareUri('clean/passport'), [$passport]);
+        /** @var Passport $result */
         $result = $this->populate(new Passport(), $response);
-        if (!$result instanceof Passport) {
-            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Passport::class);
-        }
 
         return $result;
     }
@@ -151,10 +150,8 @@ class Client
     public function cleanName($name)
     {
         $response = $this->query($this->prepareUri('clean/name'), [$name]);
+        /** @var Name $result */
         $result = $this->populate(new Name(), $response);
-        if (!$result instanceof Name) {
-            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Name::class);
-        }
 
         return $result;
     }
@@ -171,10 +168,8 @@ class Client
     public function cleanEmail($email)
     {
         $response = $this->query($this->prepareUri('clean/email'), [$email]);
+        /** @var Email $result */
         $result = $this->populate(new Email, $response);
-        if (!$result instanceof Email) {
-            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Email::class);
-        }
 
         return $result;
     }
@@ -191,10 +186,8 @@ class Client
     public function cleanDate($date)
     {
         $response = $this->query($this->prepareUri('clean/birthdate'), [$date]);
+        /** @var Date $result */
         $result = $this->populate(new Date, $response);
-        if (!$result instanceof Date) {
-            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Date::class);
-        }
 
         return $result;
     }
@@ -211,10 +204,8 @@ class Client
     public function cleanVehicle($vehicle)
     {
         $response = $this->query($this->prepareUri('clean/vehicle'), [$vehicle]);
+        /** @var Vehicle $result */
         $result = $this->populate(new Vehicle, $response);
-        if (!$result instanceof Vehicle) {
-            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Vehicle::class);
-        }
 
         return $result;
     }
@@ -332,7 +323,7 @@ class Client
      */
     public function detectAddressByIp($ip)
     {
-        $request = new Request('get', $this->baseUrlGeolocation . '?ip=' . $ip, [
+        $request = new Request('get', $this->baseSuggestionsUrl . 'detectAddressByIp' . '?ip=' . $ip, [
             'Accept'  => 'application/json',
             'Authorization' => 'Token ' . $this->token,
         ]);
@@ -361,11 +352,34 @@ class Client
             return null;
         }
 
+        /** @var Address $address */
         $address = $this->populate(new Address, $result['location']['data']);
-        if (!$address instanceof Address) {
-            throw new RuntimeException('Unexpected populate result: ' . get_class($result). '. Expected: ' . Address::class);
-        }
 
         return $address;
+    }
+
+    /**
+     * Метод возвращает арес по его коду КЛАДР или ФИАС
+     *
+     * Dadata comment: Ищет до улицы включительно, при поиске по коду дома возвращает пустой ответ.
+     * Так сделано намеренно: КЛАДР-коды и ФИАС-коды домов постоянно изменяются, поэтому хранить их ненадежно.
+     * Рекомендуем использовать связку «ФИАС-код улицы + домовая часть отдельно»
+     *
+     * @param string $addressId
+     *
+     * @return AbstractResponse|Address|null
+     */
+    public function getAddressById($addressId)
+    {
+        $response = $this->query($this->baseSuggestionsUrl . 'findById/address', ['query' => $addressId]);
+
+        if (is_array($response) && 0 < count($response)) {
+            /** @var Address $address */
+            $address = $this->populate(new Address, array_shift($response)['data']);
+
+            return $address;
+        }
+
+        return null;
     }
 }
