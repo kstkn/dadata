@@ -10,6 +10,7 @@ use Dadata\Response\Name;
 use Dadata\Response\Passport;
 use Dadata\Response\Phone;
 use Dadata\Response\Vehicle;
+use Dadata\Response\Suggestions\Party;
 use Exception;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Request;
@@ -90,6 +91,7 @@ class Client
      * @param string $address
      *
      * @return Address
+     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
@@ -108,6 +110,7 @@ class Client
      * @param string $phone
      *
      * @return Phone
+     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
@@ -126,6 +129,7 @@ class Client
      * @param string $passport
      *
      * @return Passport
+     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
@@ -144,6 +148,7 @@ class Client
      * @param string $name
      *
      * @return Name
+     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
@@ -162,6 +167,7 @@ class Client
      * @param string $email
      *
      * @return Email
+     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
@@ -180,6 +186,7 @@ class Client
      * @param string $date
      *
      * @return Date
+     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
@@ -198,6 +205,7 @@ class Client
      * @param string $vehicle
      *
      * @return Vehicle
+     * @throws \ReflectionException
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
@@ -273,8 +281,10 @@ class Client
      * Populates object with data.
      *
      * @param AbstractResponse $object
-     * @param array $data
+     * @param array            $data
+     *
      * @return AbstractResponse
+     * @throws \ReflectionException
      */
     protected function populate(AbstractResponse $object, array $data)
     {
@@ -289,6 +299,52 @@ class Client
         }
 
         return $object;
+    }
+
+    /**
+     * Создаем объект ответа по подсказкам организации
+     *
+     * @param array $response
+     *
+     * @return Party\Party
+     * @throws \ReflectionException
+     */
+    protected function populateParty (array $response)
+    {
+        list($name, $post) = array_values($response['data']['management']);
+        $management = new Party\ManagementDto($name, $post);
+
+        list($code, $full, $short) = array_values($response['data']['opf']);
+        $opf = new Party\OpfDto($code, $full, $short);
+
+        list($fullWithOpf, $shortWithOpf, $latin, $full, $short) = array_values($response['data']['name']);
+        $name = new Party\NameDto($fullWithOpf, $shortWithOpf, $latin, $full, $short);
+
+        list($status, $actualityDate, $registrationDate, $liquidationDate) = array_values($response['data']['state']);
+        $state = new Party\StateDto($status, $actualityDate, $registrationDate, $liquidationDate);
+
+        list($value, $unrestrictedValue) = array_values($response['data']['address']);
+        $simpleAddress = new Party\AddressDto($value, $unrestrictedValue);
+
+        $address = $this->populate(new Address(), $response['data']['address']['data']);
+
+        return new Party\Party(
+            $response['value'],
+            $response['unrestricted_value'],
+            $response['data']['kpp'],
+            $management,
+            $response['data']['branch_type'],
+            $response['data']['type'],
+            $opf,
+            $name,
+            $response['data']['inn'],
+            $response['data']['ogrn'],
+            $response['data']['okpo'],
+            $response['data']['okved'],
+            $state,
+            $simpleAddress,
+            $address
+        );
     }
 
     /**
@@ -368,6 +424,9 @@ class Client
      * @param string $addressId
      *
      * @return AbstractResponse|Address|null
+     * @throws \ReflectionException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function getAddressById($addressId)
     {
@@ -382,4 +441,46 @@ class Client
 
         return null;
     }
+
+    /**
+     * Ищет организации и индивидуальных предпринимателей:
+     * по ИНН / ОГРН;
+     * названию (полному, краткому, латинскому);
+     * ФИО (для индивидуальных предпринимателей);
+     * ФИО руководителя компании;
+     * адресу до улицы.
+     *
+     * @param $party
+     *
+     * @return \SplObjectStorage
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ReflectionException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     */
+    public function suggestParties($party)
+    {
+        $response = $this->query($this->prepareSuggestionsUri('suggest/party'), ['query' => $party]);
+        $collection = new \SplObjectStorage();
+
+        foreach ($response as $arParty) {
+            $party = $this->populateParty($arParty);
+            $collection->attach($party);
+        }
+        return $collection;
+    }
+
+    /**
+     * Prepares suggest URI for the request.
+     *
+     * @param string $endpoint
+     *
+     * @return string
+     */
+    protected function prepareSuggestionsUri($endpoint)
+    {
+        return $this->baseSuggestionsUrl . $endpoint;
+    }
+
+
 }
