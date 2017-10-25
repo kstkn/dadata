@@ -35,5 +35,4 @@ class Email extends AbstractModel
     {
         $this->domain = $domain;
     }
-
 }
