@@ -1,0 +1,13 @@
+{
+    "suggestions": [
+        {
+            "value": "anton@mail.ru",
+            "unrestricted_value": "anton@mail.ru",
+            "data": {
+                "local": "anton",
+                "domain": "mail.ru",
+                "qc": null
+            }
+        }
+    ]
+}
