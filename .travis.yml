@@ -1,0 +1,12 @@
+notifications:
+  email: false
+
+language: php
+
+php:
+  - 7.1
+
+script: phpunit --bootstrap vendor/autoload.php tests
+
+before_script:
+  - "composer install --dev --prefer-source --no-interaction"
