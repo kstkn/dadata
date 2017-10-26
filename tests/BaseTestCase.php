@@ -15,12 +15,17 @@ class BaseTestCase extends TestCase
      *
      * @return mixed Method return.
      */
-    public function invokeMethod(&$object, $methodName, array $parameters = array())
+    protected function invokeMethod(&$object, $methodName, array $parameters = [])
     {
         $reflection = new \ReflectionClass(get_class($object));
         $method = $reflection->getMethod($methodName);
         $method->setAccessible(true);
 
         return $method->invokeArgs($object, $parameters);
+    }
+
+    protected function loadDataFile(string $name)
+    {
+        return file_get_contents(__DIR__ . '/data/' . $name);
     }
 }

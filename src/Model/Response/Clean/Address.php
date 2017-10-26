@@ -4,15 +4,7 @@ namespace Gietos\Dadata\Model\Response\Clean;
 
 class Address extends \Gietos\Dadata\Model\Response\Address
 {
-    /**
-     * @var string Исходный адрес одной строкой
-     */
-    private $source;
-
-    /**
-     * @var string Стандартизованный адрес одной строкой
-     */
-    private $result;
+    use BaseModel;
 
     /**
      * @var float Площадь квартиры
@@ -74,26 +66,6 @@ class Address extends \Gietos\Dadata\Model\Response\Address
     public function __toString()
     {
         return (string) $this->result;
-    }
-
-    public function getSource(): ?string
-    {
-        return $this->source;
-    }
-
-    public function setSource(?string $source)
-    {
-        $this->source = $source;
-    }
-
-    public function getResult(): ?string
-    {
-        return $this->result;
-    }
-
-    public function setResult(?string $result)
-    {
-        $this->result = $result;
     }
 
     public function getFlatArea(): ?float

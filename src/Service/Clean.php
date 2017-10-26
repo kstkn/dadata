@@ -25,7 +25,6 @@ class Clean extends AbstractService
     {
         $request = $this->apiClient->createRequest('POST', $this->getBaseUri() . '/address', $addresses);
         $response = $this->apiClient->sendRequest($request);
-
         return $this->getResult($request, $response, AddressCollection::class);
     }
 
