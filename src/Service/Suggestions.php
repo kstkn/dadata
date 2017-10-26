@@ -6,6 +6,8 @@ use Gietos\Dadata\AbstractService;
 use Gietos\Dadata\Model\Response\Error;
 use Gietos\Dadata\Model\Response\Suggestions\AddressSuggestionsCollection;
 use Gietos\Dadata\Model\Response\Suggestions\AddressSuggestionsResponse;
+use Gietos\Dadata\Model\Response\Suggestions\EmailSuggestionCollection;
+use Gietos\Dadata\Model\Response\Suggestions\EmailSuggestionResponse;
 use Gietos\Dadata\Model\Response\Suggestions\FioSuggestionsCollection;
 use Gietos\Dadata\Model\Response\Suggestions\FioSuggestionsResponse;
 
@@ -68,8 +70,18 @@ class Suggestions extends AbstractService
         // todo
     }
 
-    public function suggestEmail()
+    /**
+     * @param string $query
+     * @return EmailSuggestionCollection|Error
+     */
+    public function suggestEmail(string $query)
     {
-        // todo
+        $request = $this->apiClient->createRequest('POST', $this->getBaseUri() . '/suggest/email', ['query' => $query]);
+        $response = $this->apiClient->sendRequest($request);
+        $result = $this->getResult($request, $response, EmailSuggestionResponse::class);
+        if ($result instanceof EmailSuggestionResponse) {
+            return $result->getSuggestions();
+        }
+        return $result;
     }
 }
