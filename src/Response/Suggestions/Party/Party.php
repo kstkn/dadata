@@ -28,7 +28,7 @@ class Party extends AbstractResponse
      */
     private $kpp;
     /**
-     * @var ManagementDto Информация о руководителе
+     * @var ManagementDto|null Информация о руководителе
      */
     private $management;
     /**
@@ -76,11 +76,28 @@ class Party extends AbstractResponse
      */
     private $simpleAddress;
 
+    /**
+     * @param $value
+     * @param $unrestrictedValue
+     * @param $kpp
+     * @param ManagementDto|null $management
+     * @param $branchType
+     * @param $type
+     * @param OpfDto $opf
+     * @param NameDto $name
+     * @param $inn
+     * @param $ogrn
+     * @param $okpo
+     * @param $okved
+     * @param StateDto $state
+     * @param AddressDto $simpleAddress
+     * @param Address|null $address
+     */
     public function __construct(
         $value,
         $unrestrictedValue,
         $kpp,
-        ManagementDto $management,
+        $management,
         $branchType,
         $type,
         OpfDto $opf,
@@ -91,11 +108,18 @@ class Party extends AbstractResponse
         $okved,
         StateDto $state,
         AddressDto $simpleAddress,
-        Address $address
+        $address
     ) {
         $this->value = $value;
         $this->unrestrictedValue = $unrestrictedValue;
         $this->kpp = $kpp;
+        if ($management !== null && !$management instanceof ManagementDto) {
+            throw new \InvalidArgumentException(sprintf(
+                'Argument $management passed to Part::__construct must be instance of %s, %s given',
+                ManagementDto::class,
+                gettype($management)
+            ));
+        }
         $this->management = $management;
         $this->branchType = $branchType;
         $this->type = $type;
@@ -106,6 +130,13 @@ class Party extends AbstractResponse
         $this->okpo = $okpo;
         $this->okved = $okved;
         $this->state = $state;
+        if ($address !== null && !$address instanceof Address) {
+            throw new \InvalidArgumentException(sprintf(
+                'Argument $address passed to Part::__construct must be instance of %s, %s given',
+                Address::class,
+                gettype($address)
+            ));
+        }
         $this->address = $address;
         $this->simpleAddress = $simpleAddress;
     }
