@@ -9,15 +9,11 @@ use Dadata\Response\Email;
 use Dadata\Response\Name;
 use Dadata\Response\Passport;
 use Dadata\Response\Phone;
-use Dadata\Response\Vehicle;
 use Dadata\Response\Suggestions\Party;
-use Exception;
+use Dadata\Response\Vehicle;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
-use InvalidArgumentException;
-use ReflectionClass;
-use ReflectionProperty;
-use RuntimeException;
 
 /**
  * Class Client
@@ -28,19 +24,21 @@ class Client
      * Исходное значение распознано уверенно. Не требуется ручная проверка
      */
     const QC_OK = 0;
+
     /**
      * Исходное значение распознано с допущениями или не распознано. Требуется ручная проверка
      */
     const QC_UNSURE = 1;
+
     /**
      * Исходное значение пустое или заведомо "мусорное"
      */
     const QC_INVALID = 2;
-    
+
     const METHOD_GET = 'GET';
-    
+
     const METHOD_POST = 'POST';
-    
+
     /**
      * @var string
      */
@@ -92,8 +90,9 @@ class Client
      *
      * @return Address
      * @throws \ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws GuzzleException
      */
     public function cleanAddress($address)
     {
@@ -111,14 +110,15 @@ class Client
      *
      * @return Phone
      * @throws \ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws GuzzleException
      */
     public function cleanPhone($phone)
     {
         $response = $this->query($this->prepareUri('clean/phone'), [$phone]);
         /** @var Phone $result */
-        $result = $this->populate(new Phone, $response);
+        $result = $this->populate(new Phone(), $response);
 
         return $result;
     }
@@ -130,8 +130,9 @@ class Client
      *
      * @return Passport
      * @throws \ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws GuzzleException
      */
     public function cleanPassport($passport)
     {
@@ -149,8 +150,9 @@ class Client
      *
      * @return Name
      * @throws \ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws GuzzleException
      */
     public function cleanName($name)
     {
@@ -168,14 +170,15 @@ class Client
      *
      * @return Email
      * @throws \ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws GuzzleException
      */
     public function cleanEmail($email)
     {
         $response = $this->query($this->prepareUri('clean/email'), [$email]);
         /** @var Email $result */
-        $result = $this->populate(new Email, $response);
+        $result = $this->populate(new Email(), $response);
 
         return $result;
     }
@@ -187,14 +190,15 @@ class Client
      *
      * @return Date
      * @throws \ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws GuzzleException
      */
     public function cleanDate($date)
     {
         $response = $this->query($this->prepareUri('clean/birthdate'), [$date]);
         /** @var Date $result */
-        $result = $this->populate(new Date, $response);
+        $result = $this->populate(new Date(), $response);
 
         return $result;
     }
@@ -206,14 +210,15 @@ class Client
      *
      * @return Vehicle
      * @throws \ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws GuzzleException
      */
     public function cleanVehicle($vehicle)
     {
         $response = $this->query($this->prepareUri('clean/vehicle'), [$vehicle]);
         /** @var Vehicle $result */
-        $result = $this->populate(new Vehicle, $response);
+        $result = $this->populate(new Vehicle(), $response);
 
         return $result;
     }
@@ -222,33 +227,35 @@ class Client
      * Gets balance.
      *
      * @return float
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws GuzzleException
      */
     public function getBalance()
     {
         $response = $this->query($this->prepareUri('profile/balance'), [], self::METHOD_GET);
-        return (double) $response;
+        return (float) $response;
     }
 
     /**
      * Requests API.
      *
      * @param string $uri
-     * @param array  $params
+     * @param array $params
      *
      * @param string $method
      *
      * @return array
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws GuzzleException
      */
     protected function query($uri, array $params = [], $method = self::METHOD_POST)
     {
         $request = new Request($method, $uri, [
-            'Content-Type'  => 'application/json',
+            'Content-Type' => 'application/json',
             'Authorization' => 'Token ' . $this->token,
-            'X-Secret'      => $this->secret,
+            'X-Secret' => $this->secret,
         ], 0 < count($params) ? json_encode($params) : null);
 
         $response = $this->httpClient->send($request, $this->httpOptions);
@@ -256,11 +263,11 @@ class Client
         $result = json_decode($response->getBody(), true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException('Error parsing response: ' . json_last_error_msg());
+            throw new \RuntimeException('Error parsing response: ' . json_last_error_msg());
         }
 
         if (empty($result)) {
-            throw new RuntimeException('Empty result');
+            throw new \RuntimeException('Empty result');
         }
 
         return array_shift($result);
@@ -288,9 +295,9 @@ class Client
      */
     protected function populate(AbstractResponse $object, array $data)
     {
-        $reflect = new ReflectionClass($object);
+        $reflect = new \ReflectionClass($object);
 
-        $properties = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
+        $properties = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC);
 
         foreach ($properties as $property) {
             if (array_key_exists($property->name, $data)) {
@@ -309,10 +316,14 @@ class Client
      * @return Party\Party
      * @throws \ReflectionException
      */
-    protected function populateParty (array $response)
+    protected function populateParty(array $response)
     {
-        list($name, $post) = array_values($response['data']['management']);
-        $management = new Party\ManagementDto($name, $post);
+        $management = null;
+        $managementData = $response['data']['management'];
+        if (is_array($managementData) && array_key_exists('name', $managementData) && array_key_exists('post', $managementData)) {
+            list($name, $post) = array_values($response['data']['management']);
+            $management = new Party\ManagementDto($name, $post);
+        }
 
         list($code, $full, $short) = array_values($response['data']['opf']);
         $opf = new Party\OpfDto($code, $full, $short);
@@ -326,7 +337,10 @@ class Client
         list($value, $unrestrictedValue) = array_values($response['data']['address']);
         $simpleAddress = new Party\AddressDto($value, $unrestrictedValue);
 
-        $address = $this->populate(new Address(), $response['data']['address']['data']);
+        $address = null;
+        if (is_array($response['data']['address']['data'])) {
+            $address = $this->populate(new Address(), $response['data']['address']['data']);
+        }
 
         return new Party\Party(
             $response['value'],
@@ -350,11 +364,11 @@ class Client
     /**
      * Guesses and converts property type by phpdoc comment.
      *
-     * @param ReflectionProperty $property
+     * @param \ReflectionProperty $property
      * @param  mixed $value
      * @return mixed
      */
-    protected function getValueByAnnotatedType(ReflectionProperty $property, $value)
+    protected function getValueByAnnotatedType(\ReflectionProperty $property, $value)
     {
         $comment = $property->getDocComment();
         if (preg_match('/@var (.+?)(\|null)? /', $comment, $matches)) {
@@ -375,12 +389,13 @@ class Client
     /**
      * @param string $ip
      * @return null|Address
-     * @throws Exception
+     * @throws \Exception
+     * @throws GuzzleException
      */
     public function detectAddressByIp($ip)
     {
         $request = new Request('get', $this->baseSuggestionsUrl . 'detectAddressByIp' . '?ip=' . $ip, [
-            'Accept'  => 'application/json',
+            'Accept' => 'application/json',
             'Authorization' => 'Token ' . $this->token,
         ]);
 
@@ -389,11 +404,11 @@ class Client
         $result = json_decode($response->getBody(), true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException('Error parsing response: ' . json_last_error_msg());
+            throw new \RuntimeException('Error parsing response: ' . json_last_error_msg());
         }
 
         if (!array_key_exists('location', $result)) {
-            throw new Exception('Required key "location" is missing');
+            throw new \Exception('Required key "location" is missing');
         }
 
         if (null === $result['location']) {
@@ -401,7 +416,7 @@ class Client
         }
 
         if (!array_key_exists('data', $result['location'])) {
-            throw new Exception('Required key "data" is missing');
+            throw new \Exception('Required key "data" is missing');
         }
 
         if (null === $result['location']['data']) {
@@ -427,6 +442,7 @@ class Client
      * @throws \ReflectionException
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
+     * @throws GuzzleException
      */
     public function getAddressById($addressId)
     {
@@ -450,10 +466,10 @@ class Client
      * ФИО руководителя компании;
      * адресу до улицы.
      *
-     * @param $party
+     * @param string $party
      *
      * @return \SplObjectStorage
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      * @throws \ReflectionException
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
@@ -481,6 +497,4 @@ class Client
     {
         return $this->baseSuggestionsUrl . $endpoint;
     }
-
-
 }
