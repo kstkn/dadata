@@ -234,7 +234,7 @@ class Client
     public function getBalance()
     {
         $response = $this->query($this->prepareUri('profile/balance'), [], self::METHOD_GET);
-        return (double) $response;
+        return (float) $response;
     }
 
     /**
@@ -253,9 +253,9 @@ class Client
     protected function query($uri, array $params = [], $method = self::METHOD_POST)
     {
         $request = new Request($method, $uri, [
-            'Content-Type'  => 'application/json',
+            'Content-Type' => 'application/json',
             'Authorization' => 'Token ' . $this->token,
-            'X-Secret'      => $this->secret,
+            'X-Secret' => $this->secret,
         ], 0 < count($params) ? json_encode($params) : null);
 
         $response = $this->httpClient->send($request, $this->httpOptions);
@@ -316,7 +316,7 @@ class Client
      * @return Party\Party
      * @throws \ReflectionException
      */
-    protected function populateParty (array $response)
+    protected function populateParty(array $response)
     {
         $management = null;
         $managementData = $response['data']['management'];
@@ -395,7 +395,7 @@ class Client
     public function detectAddressByIp($ip)
     {
         $request = new Request('get', $this->baseSuggestionsUrl . 'detectAddressByIp' . '?ip=' . $ip, [
-            'Accept'  => 'application/json',
+            'Accept' => 'application/json',
             'Authorization' => 'Token ' . $this->token,
         ]);
 
