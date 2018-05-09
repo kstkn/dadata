@@ -1,0 +1,40 @@
+preset: psr2
+
+risky: false
+
+enabled:
+  - alpha_ordered_imports
+  - binary_operator_spaces
+  - blank_line_after_opening_tag
+  - cast_spaces
+  - concat_with_spaces
+  - function_typehint_space
+  - hash_to_slash_comment
+  - include
+  - lowercase_cast
+  - method_separation
+  - native_function_casing
+  - no_blank_lines_after_class_opening
+  - no_blank_lines_after_phpdoc
+  - no_blank_lines_after_return
+  - no_blank_lines_after_throw
+  - no_blank_lines_between_imports
+  - no_blank_lines_between_traits
+  - no_empty_statement
+  - no_extra_consecutive_blank_lines
+  - no_spaces_inside_offset
+  - no_spaces_outside_offset
+  - no_trailing_comma_in_singleline_array
+  - no_unused_imports
+  - no_whitespace_before_comma_in_array
+  - normalize_index_brace
+  - object_operator_without_whitespace
+  - return_type_declaration
+  - short_array_syntax
+  - short_scalar_cast
+  - single_blank_line_before_namespace
+  - single_quote
+  - trailing_comma_in_multiline_array
+  - unalign_double_arrow
+  - unalign_equals
+  - whitespace_after_comma_in_array
