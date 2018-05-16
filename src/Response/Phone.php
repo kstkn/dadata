@@ -65,7 +65,7 @@ class Phone extends AbstractResponse
     public $city_code;
 
     /**
-     * @var integer Локальный номер телефона
+     * @var string Локальный номер телефона
      */
     public $number;
 
