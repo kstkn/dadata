@@ -19,18 +19,15 @@
   ],
   "require": {
     "php": ">=7.1",
+    "ext-json": "*",
     "doctrine/inflector": "^1.2",
     "doctrine/collections": "^1.4",
-    "php-http/client-implementation": "^1.0",
-    "php-http/httplug": "^1.0",
-    "php-http/message-factory": "^1.0"
+    "psr/http-client": "^0.3",
+    "psr/http-factory": "^1.0"
   },
   "require-dev": {
-    "php-http/mock-client": "^1.0",
-    "php-http/message": "^1.0",
-    "guzzlehttp/psr7": "^1.0",
-    "zendframework/zend-diactoros": "^1.6",
-    "phpunit/phpunit": "^6.4"
+    "phpunit/phpunit": "^7",
+    "zendframework/zend-diactoros": "^2.0"
   },
   "autoload": {
     "psr-4": {

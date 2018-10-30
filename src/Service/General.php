@@ -16,10 +16,10 @@ class General extends AbstractService
      */
     public function getVersion()
     {
-        $request = $this->apiClient->createRequest('GET', $this->getBaseUri() . '/version');
-        $response = $this->apiClient->sendRequest($request);
+        $request = $this->apiRequestFactory->createRequest('GET', $this->getBaseUri() . '/version');
+        $response = $this->httpClient->sendRequest($request);
 
-        return $this->getResult($request, $response, Version::class);
+        return $this->getResult($response, Version::class);
     }
 
     /**
@@ -30,8 +30,8 @@ class General extends AbstractService
      */
     public function getStatus()
     {
-        $request = $this->apiClient->createRequest('GET', $this->getBaseUri() . '/status/CLEAN');
-        $response = $this->apiClient->sendRequest($request);
+        $request = $this->apiRequestFactory->createRequest('GET', $this->getBaseUri() . '/status/CLEAN');
+        $response = $this->httpClient->sendRequest($request);
 
         return $response->getStatusCode() === 200;
     }
@@ -43,10 +43,10 @@ class General extends AbstractService
      */
     public function getBalance()
     {
-        $request = $this->apiClient->createRequest('GET', $this->getBaseUri() . '/profile/balance');
-        $response = $this->apiClient->sendRequest($request);
+        $request = $this->apiRequestFactory->createRequest('GET', $this->getBaseUri() . '/profile/balance');
+        $response = $this->httpClient->sendRequest($request);
 
-        $result = $this->getResult($request, $response, Balance::class);
+        $result = $this->getResult($response, Balance::class);
 
         if ($result instanceof Balance) {
             return $result->getBalance();

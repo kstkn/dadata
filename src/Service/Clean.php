@@ -23,9 +23,9 @@ class Clean extends AbstractService
      */
     public function cleanAddress(array $addresses)
     {
-        $request = $this->apiClient->createRequest('POST', $this->getBaseUri() . '/address', $addresses);
-        $response = $this->apiClient->sendRequest($request);
-        return $this->getResult($request, $response, AddressCollection::class);
+        $request = $this->apiRequestFactory->createRequest('POST', $this->getBaseUri() . '/address', $addresses);
+        $response = $this->httpClient->sendRequest($request);
+        return $this->getResult($response, AddressCollection::class);
     }
 
     public function cleanPhone()
@@ -46,9 +46,9 @@ class Clean extends AbstractService
      */
     public function cleanName(array $names)
     {
-        $request = $this->apiClient->createRequest('POST', $this->getBaseUri() . '/name', $names);
-        $response = $this->apiClient->sendRequest($request);
-        return $this->getResult($request, $response, NameCollection::class);
+        $request = $this->apiRequestFactory->createRequest('POST', $this->getBaseUri() . '/name', $names);
+        $response = $this->httpClient->sendRequest($request);
+        return $this->getResult($response, NameCollection::class);
     }
 
     public function cleanEmail()
