@@ -4,8 +4,5 @@ namespace Gietos\Dadata\Model;
 
 interface ConfigurableInterface
 {
-    /**
-     * @param array $config
-     */
-    public function configure(array $config = []);
+    public function configure(\stdClass $config): void;
 }

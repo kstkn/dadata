@@ -6,51 +6,90 @@ use Doctrine\Common\Inflector\Inflector;
 
 abstract class AbstractModel implements ConfigurableInterface
 {
-    /**
-     * @param array $config
-     */
-    public function configure(array $config = [])
+    public function configure(\stdClass $config): void
     {
         foreach ($config as $key => $value) {
             $propertyName = Inflector::camelize($key);
-            $this->setProperty($propertyName, $value);
+            $this->setAttribute($propertyName, $value);
         }
+    }
+
+    private function isAssoc(array $array): bool
+    {
+        if ($array === []) {
+            return false;
+        }
+
+        return array_keys($array) !== range(0, count($array) - 1);
+    }
+
+    private function createObject(\ReflectionClass $class, $value)
+    {
+        $factoryClass = sprintf(__NAMESPACE__ . '\Factory\%sFactory', $class->getShortName());
+        if (class_exists($factoryClass)) {
+            return call_user_func_array([$factoryClass, 'create'], [$value]);
+        }
+
+        if (!$class->implementsInterface(ConfigurableInterface::class)) {
+            throw new \LogicException(
+                sprintf(
+                    'Failed to configure object of class %s, class MUST either implement %s or have a factory %s',
+                    $class->getName(),
+                    ConfigurableInterface::class,
+                    $factoryClass
+                )
+            );
+        }
+
+        $object = $class->newInstanceWithoutConstructor();
+        $object->configure($value);
+
+        return $object;
+    }
+
+    private function createObjects(\ReflectionClass $class, ...$values): array
+    {
+        foreach ($values as $i => $value) {
+            $values[$i] = $this->createObject($class, $value);
+        }
+
+        return $values;
     }
 
     /**
      * @param string $name
      * @param mixed $value
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
-    public function setProperty(string $name, $value)
+    public function setAttribute(string $name, $value): void
     {
-        $setter = 'set' . ucfirst($name);
+        if (method_exists($this, 'unpack' . ucfirst($name))) {
+            $methodReflection = new \ReflectionMethod($this, 'unpack' . ucfirst($name));
+        } elseif(method_exists($this, 'set' . ucfirst($name))) {
+            $methodReflection = new \ReflectionMethod($this, 'set' . ucfirst($name));
+        }
 
-        if (method_exists($this, $setter)) {
-            $methodReflection = new \ReflectionMethod($this, $setter);
+        if (isset($methodReflection)) {
             $params = $methodReflection->getParameters();
             if (count($params) !== 1) {
-                throw new \LogicException(
-                    sprintf('Setter method %s::%s must have exactly 1 argument', get_class($this), $setter)
-                );
-            }
-            $param = $params[0];
-            if (null === $value) {
-                if (false === $param->allowsNull()) {
-                    throw new \LogicException(
-                        sprintf('Setter method %s::%s doesn\'t allow null', get_class($this), $setter)
-                    );
-                }
-            } else {
-                if ($class = $param->getClass()) {
-                    $object = $class->newInstance();
-                    if ($object instanceof ConfigurableInterface) {
-                        $object->configure($value);
-                        $value = $object;
-                    }
-                }
+                throw new \InvalidArgumentException(sprintf(
+                    'Only methods with exactly 1 argument is supported. Unsupported method: %s',
+                    $methodReflection->getName()
+                ));
             }
 
-            call_user_func([$this, $setter], $value);
+            $param = $params[0];
+            if ($class = $param->getClass()) {
+                if (is_array($value) && !$this->isAssoc($value)) {
+                    $methodReflection->invokeArgs($this, $this->createObjects($class, ...$value));
+
+                    return;
+                } elseif ($value !== null) {
+                    $value = $this->createObject($class, $value);
+                }
+            }
+            $methodReflection->invokeArgs($this, [$value]);
 
             return;
         }
