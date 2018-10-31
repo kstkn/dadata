@@ -61,16 +61,16 @@ class ConfigureTest extends BaseTestCase
     public function testArrayConfigured()
     {
         $object = new DummyConfigurableModel;
-        $object->configure(['SomeArrayProperty' => [1,2,3]]);
+        $object->configure(['SomeArrayProperty' => [1, 2, 3]]);
 
-        $this->assertEquals([1,2,3], $object->getSomeArrayProperty());
+        $this->assertEquals([1, 2, 3], $object->getSomeArrayProperty());
     }
 
     public function testChildConfigured()
     {
         $object = new DummyConfigurableModel();
         $object->configure(['SomeChild' => [
-            'SomeChildScalarProperty' => 'someValue'
+            'SomeChildScalarProperty' => 'someValue',
         ]]);
 
         $child = $object->getSomeChild();
