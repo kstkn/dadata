@@ -66,7 +66,7 @@ abstract class AbstractModel implements ConfigurableInterface
     {
         if (method_exists($this, 'unpack' . ucfirst($name))) {
             $methodReflection = new \ReflectionMethod($this, 'unpack' . ucfirst($name));
-        } elseif(method_exists($this, 'set' . ucfirst($name))) {
+        } elseif (method_exists($this, 'set' . ucfirst($name))) {
             $methodReflection = new \ReflectionMethod($this, 'set' . ucfirst($name));
         }
 

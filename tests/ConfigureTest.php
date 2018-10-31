@@ -11,7 +11,7 @@ class ConfigureTest extends BaseTestCase
     {
         return [
             ['{"SomeScalarProperty": 1}', 1, 'someScalarProperty'],
-            ['{"SomeArrayProperty": [1,2,3]}', [1,2,3], 'someArrayProperty'],
+            ['{"SomeArrayProperty": [1,2,3]}', [1, 2, 3], 'someArrayProperty'],
             ['{"SomeDateTime": "2018-01-01"}', new \DateTimeImmutable('2018-01-01'), 'someDateTime'],
         ];
     }
