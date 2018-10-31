@@ -38,3 +38,6 @@ enabled:
   - unalign_double_arrow
   - unalign_equals
   - whitespace_after_comma_in_array
+
+disabled:
+  - single_import_per_statement

@@ -2,13 +2,12 @@
 
 namespace Gietos\Dadata\Tests;
 
-use Gietos\Dadata\Api;
-use Http\Message\MessageFactory\DiactorosMessageFactory;
-use Http\Message\StreamFactory\DiactorosStreamFactory;
-use Http\Message\UriFactory\DiactorosUriFactory;
-use Http\Mock\Client;
+use Gietos\Dadata\ApiRequestFactory;
+use Zend\Diactoros\RequestFactory;
+use Zend\Diactoros\StreamFactory;
+use Zend\Diactoros\UriFactory;
 
-class ApiTest extends BaseTestCase
+class ApiRequestFactoryTest extends BaseTestCase
 {
     /**
      * @var string
@@ -21,33 +20,32 @@ class ApiTest extends BaseTestCase
     protected $secret = 'secret';
 
     /**
-     * @var Api
+     * @var ApiRequestFactory
      */
-    protected $apiClient;
+    protected $apiRequestFactory;
 
     public function setUp()
     {
-        $this->apiClient = new Api(
+        $this->apiRequestFactory = new ApiRequestFactory(
             $this->token,
             $this->secret,
-            new Client,
-            new DiactorosMessageFactory,
-            new DiactorosStreamFactory,
-            new DiactorosUriFactory
+            new RequestFactory(),
+            new StreamFactory(),
+            new UriFactory()
         );
     }
 
     public function testRequestWithCorrectMethodCreated()
     {
         $method = 'GET';
-        $request = $this->apiClient->createRequest($method, '');
+        $request = $this->apiRequestFactory->createRequest($method, '');
         $this->assertEquals($method, $request->getMethod());
     }
 
     public function testRequestWithCorrectEndpointCreated()
     {
         $endpoint = 'https://example.com/endpoint';
-        $request = $this->apiClient->createRequest('GET', $endpoint);
+        $request = $this->apiRequestFactory->createRequest('GET', $endpoint);
         $this->assertEquals($endpoint, (string) $request->getUri());
     }
 
@@ -59,7 +57,7 @@ class ApiTest extends BaseTestCase
             'X-Secret' => $this->secret,
         ];
 
-        $request = $this->apiClient->createRequest('POST', 'https://example.com/endpoint');
+        $request = $this->apiRequestFactory->createRequest('POST', 'https://example.com/endpoint');
 
         foreach ($expectedHeaders as $name => $value) {
             $this->assertEquals($value, (string) $request->getHeaderLine($name));
@@ -71,7 +69,7 @@ class ApiTest extends BaseTestCase
         $body = ['one' => 1];
         $encodedBody = '{"one":1}';
 
-        $request = $this->apiClient->createRequest('GET', 'https://example.com/endpoint', $body);
+        $request = $this->apiRequestFactory->createRequest('GET', 'https://example.com/endpoint', $body);
 
         $this->assertEquals($encodedBody, (string) $request->getBody());
     }

@@ -32,9 +32,9 @@ class Suggestions extends AbstractService
      */
     public function suggestFio(string $query)
     {
-        $request = $this->apiClient->createRequest('POST', $this->getBaseUri() . '/suggest/fio', ['query' => $query]);
-        $response = $this->apiClient->sendRequest($request);
-        $result = $this->getResult($request, $response, FioSuggestionsResponse::class);
+        $request = $this->apiRequestFactory->createRequest('POST', $this->getBaseUri() . '/suggest/fio', ['query' => $query]);
+        $response = $this->httpClient->sendRequest($request);
+        $result = $this->getResult($response, FioSuggestionsResponse::class);
         if ($result instanceof FioSuggestionsResponse) {
             return $result->getSuggestions();
         }
@@ -49,9 +49,9 @@ class Suggestions extends AbstractService
     public function suggestAddress(string $query, int $count = 10)
     {
         $body = ['query' => $query, 'count' => $count];
-        $request = $this->apiClient->createRequest('POST', $this->getBaseUri() . '/suggest/address', $body);
-        $response = $this->apiClient->sendRequest($request);
-        $result = $this->getResult($request, $response, AddressSuggestionsResponse::class);
+        $request = $this->apiRequestFactory->createRequest('POST', $this->getBaseUri() . '/suggest/address', $body);
+        $response = $this->httpClient->sendRequest($request);
+        $result = $this->getResult($response, AddressSuggestionsResponse::class);
         if ($result instanceof AddressSuggestionsResponse) {
             return $result->getSuggestions();
         }

@@ -4,8 +4,6 @@ namespace Gietos\Dadata;
 
 use Gietos\Dadata\Model\ConfigurableInterface;
 use Gietos\Dadata\Model\Response\Error;
-use Http\Client\Exception\HttpException;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class JsonMediator
@@ -41,21 +39,16 @@ class JsonMediator
     }
 
     /**
-     * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param string $expectedResponseClass
      * @return object|Error
      */
-    public function getResult(RequestInterface $request, ResponseInterface $response, string $expectedResponseClass)
+    public function getResult(ResponseInterface $response, string $expectedResponseClass)
     {
         $data = json_decode((string) $response->getBody(), true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new HttpException(
-                sprintf('Could not parse JSON response: %s', json_last_error_msg()),
-                $request,
-                $response
-            );
+            throw new \Exception(sprintf('Could not parse JSON response: %s', json_last_error_msg()));
         }
 
         if ($response->getStatusCode() !== 200) {
@@ -63,11 +56,7 @@ class JsonMediator
         }
 
         if (!is_array($data)) {
-            throw new HttpException(
-                'Unexpected JSON response. Array is expected',
-                $request,
-                $response
-            );
+            throw new \Exception('Unexpected JSON response. Array is expected');
         }
 
         return $this->getObject($expectedResponseClass, $data);

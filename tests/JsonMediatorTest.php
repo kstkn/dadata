@@ -4,32 +4,55 @@ namespace Gietos\Dadata\Tests;
 
 use Gietos\Dadata\JsonMediator;
 use Gietos\Dadata\Model\Response\Error;
-use Http\Message\MessageFactory;
-use Http\Message\MessageFactory\DiactorosMessageFactory;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Zend\Diactoros\RequestFactory;
+use Zend\Diactoros\ResponseFactory;
+use Zend\Diactoros\StreamFactory;
 
 class JsonMediatorTest extends BaseTestCase
 {
     /**
-     * @var MessageFactory
+     * @var RequestFactoryInterface
      */
-    protected $messageFactory;
+    protected $requestFactory;
+
+    /**
+     * @var ResponseFactoryInterface
+     */
+    protected $responseFactory;
 
     /**
      * @var JsonMediator
      */
     protected $jsonMediator;
 
+    /**
+     * @var StreamFactory
+     */
+    protected $streamFactory;
+
     public function setUp()
     {
-        $this->messageFactory = new DiactorosMessageFactory;
-        $this->jsonMediator = new JsonMediator;
+        $this->requestFactory = new RequestFactory();
+        $this->responseFactory = new ResponseFactory();
+        $this->streamFactory = new StreamFactory();
+        $this->jsonMediator = new JsonMediator();
+    }
+
+    public function testExceptionOnInvalidJsonSyntax()
+    {
+        $response = $this->responseFactory->createResponse();
+        $this->expectException(\Exception::class);
+        $this->jsonMediator->getResult($response, \stdClass::class);
     }
 
     public function testError()
     {
-        $request = $this->messageFactory->createRequest('POST', '/');
-        $response = $this->messageFactory->createResponse(401, null, [], '{"detail":"Some details"}');
-        $result = $this->jsonMediator->getResult($request, $response, \stdClass::class);
+        $response = $this->responseFactory->createResponse(401)
+            ->withBody($this->streamFactory->createStream('{"detail":"Some details"}'))
+        ;
+        $result = $this->jsonMediator->getResult($response, \stdClass::class);
 
         $this->assertInstanceOf(Error::class, $result);
     }

@@ -2,14 +2,14 @@
 
 namespace Gietos\Dadata;
 
-use Http\Client\HttpClient;
-use Http\Message\RequestFactory;
-use Http\Message\StreamFactory;
-use Http\Message\UriFactory;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{
+    RequestFactoryInterface,
+    RequestInterface,
+    StreamFactoryInterface,
+    UriFactoryInterface
+};
 
-class Api
+class ApiRequestFactory
 {
     /**
      * @var string
@@ -27,36 +27,29 @@ class Api
     private $secret;
 
     /**
-     * @var HttpClient
-     */
-    private $httpClient;
-
-    /**
-     * @var RequestFactory
+     * @var RequestFactoryInterface
      */
     private $requestFactory;
 
     /**
-     * @var StreamFactory
+     * @var StreamFactoryInterface
      */
     private $streamFactory;
 
     /**
-     * @var UriFactory
+     * @var UriFactoryInterface
      */
     private $uriFactory;
 
     public function __construct(
         string $token,
         string $secret,
-        HttpClient $httpClient,
-        RequestFactory $requestFactory,
-        StreamFactory $streamFactory,
-        UriFactory $uriFactory
+        RequestFactoryInterface $requestFactory,
+        StreamFactoryInterface $streamFactory,
+        UriFactoryInterface $uriFactory
     ) {
         $this->token = $token;
         $this->secret = $secret;
-        $this->httpClient = $httpClient;
         $this->requestFactory = $requestFactory;
         $this->streamFactory = $streamFactory;
         $this->uriFactory = $uriFactory;
@@ -76,29 +69,23 @@ class Api
      * @param string $method
      * @param string $uri
      * @param array $body
+     *
      * @return RequestInterface
      */
     public function createRequest(string $method, string $uri, array $body = []): RequestInterface
     {
-        $request = $this->requestFactory->createRequest(
-            $method,
-            $uri,
-            [
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Token ' . $this->token,
-                'X-Secret' => $this->secret,
-            ]
-        );
+        $request = $this->requestFactory->createRequest($method, $uri)
+            ->withHeader('Content-Type', 'application/json')
+            ->withHeader('Authorization', 'Token ' . $this->token)
+            ->withHeader('X-Secret', $this->secret)
+        ;
 
         if (!empty($body)) {
-            $request = $request->withBody($this->streamFactory->createStream(json_encode($body, JSON_UNESCAPED_UNICODE)));
+            $request = $request
+                ->withBody($this->streamFactory->createStream(json_encode($body, JSON_UNESCAPED_UNICODE)))
+            ;
         }
 
         return $request;
-    }
-
-    public function sendRequest(RequestInterface $request): ResponseInterface
-    {
-        return $this->httpClient->sendRequest($request);
     }
 }

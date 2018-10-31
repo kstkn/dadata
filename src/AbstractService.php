@@ -3,19 +3,25 @@
 namespace Gietos\Dadata;
 
 use Gietos\Dadata\Model\Response\Error;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
 abstract class AbstractService
 {
     /**
-     * @var Api
+     * @var ApiRequestFactory
      */
-    protected $apiClient;
+    protected $apiRequestFactory;
 
-    public function __construct(Api $apiClient)
+    /**
+     * @var ClientInterface
+     */
+    protected $httpClient;
+
+    public function __construct(ApiRequestFactory $apiRequestFactory, ClientInterface $httpClient)
     {
-        $this->apiClient = $apiClient;
+        $this->apiRequestFactory = $apiRequestFactory;
+        $this->httpClient = $httpClient;
     }
 
     protected function getBaseUri(): string
@@ -24,15 +30,14 @@ abstract class AbstractService
     }
 
     /**
-     * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param string $expectedResponseClass
      * @return object|Error
      */
-    public function getResult(RequestInterface $request, ResponseInterface $response, $expectedResponseClass)
+    public function getResult(ResponseInterface $response, $expectedResponseClass)
     {
         $responseMediator = new JsonMediator;
-        $result = $responseMediator->getResult($request, $response, $expectedResponseClass);
+        $result = $responseMediator->getResult($response, $expectedResponseClass);
 
         return $result;
     }
