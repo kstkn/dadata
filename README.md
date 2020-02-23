@@ -3,9 +3,9 @@ Dadata API client
 
 Non-official PHP library for the DaData.ru REST API
 
-[![Latest Stable Version](https://poser.pugx.org/gietos/dadata/version)](https://packagist.org/packages/gietos/dadata)
-[![Total Downloads](https://poser.pugx.org/gietos/dadata/downloads)](https://packagist.org/packages/gietos/dadata)
-[![License](https://poser.pugx.org/gietos/dadata/license)](https://packagist.org/packages/gietos/dadata)
+[![Latest Stable Version](https://poser.pugx.org/kstkn/dadata/version)](https://packagist.org/packages/kstkn/dadata)
+[![Total Downloads](https://poser.pugx.org/kstkn/dadata/downloads)](https://packagist.org/packages/kstkn/dadata)
+[![License](https://poser.pugx.org/kstkn/dadata/license)](https://packagist.org/packages/kstkn/dadata)
 
 [API documentation](https://dadata.ru/api/clean/)
 
@@ -14,7 +14,7 @@ Non-official PHP library for the DaData.ru REST API
 The suggested installation method is via [composer](https://getcomposer.org/):
 
 ```sh
-composer require gietos/dadata
+composer require kstkn/dadata
 ```
 
 ## Usage
