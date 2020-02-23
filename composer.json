@@ -1,16 +1,15 @@
 {
-  "name": "gietos/dadata",
+  "name": "kstkn/dadata",
   "description": "Dadata API client (https://dadata.ru)",
   "minimum-stability": "stable",
   "license": "MIT",
   "support": {
-    "issues": "https://github.com/gietos/dadata/issues",
-    "source": "https://github.com/gietos/dadata"
+    "issues": "https://github.com/kstkn/dadata/issues",
+    "source": "https://github.com/kstkn/dadata"
   },
   "authors": [
     {
-      "name": "Sergey Kasatkin",
-      "email": "spam@onsky.ru"
+      "name": "Sergei Kasatkin"
     }
   ],
   "require": {
