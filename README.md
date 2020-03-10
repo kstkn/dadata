@@ -14,7 +14,7 @@ Non-official PHP library for the DaData.ru REST API
 The suggested installation method is via [composer](https://getcomposer.org/):
 
 ```sh
-composer require kstkn/dadata
+composer require AndreyProkofyev/dadata
 ```
 
 ## Usage
