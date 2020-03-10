@@ -510,6 +510,15 @@ class Address extends AbstractModel
      */
     protected $qcGeo;
 
+    /**
+     * @var string ISO-код страны (двухсимвольный)
+     */
+    public $country_iso_code;
+    /**
+     * @var string ISO-код региона
+     */
+    public $region_iso_code;
+
     public function getPostalCode(): ?string
     {
         return $this->postalCode;
