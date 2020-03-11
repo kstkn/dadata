@@ -1,17 +1,13 @@
 {
-  "name": "andreyprokofyev/dadata",
+  "name": "kstkn/dadata",
   "description": "Dadata API client (https://dadata.ru)",
   "minimum-stability": "stable",
   "license": "MIT",
   "support": {
-    "issues": "https://github.com/andreyprokofyev/dadata/issues",
-    "source": "https://github.com/andreyprokofyev/dadata"
+    "issues": "https://github.com/kstkn/dadata/issues",
+    "source": "https://github.com/kstkn/dadata"
   },
   "authors": [
-    {
-      "name": "Andrey Prokofyev",
-      "email": "prokofuev.andrew@gmail.com"
-    },
     {
       "name": "Sergey Kasatkin",
       "email": "spam@onsky.ru"
@@ -30,7 +26,6 @@
     "psr/http-factory": "^1.0"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-master",
     "phpunit/phpunit": "^7",
     "zendframework/zend-diactoros": "^2.0"
   },
