@@ -560,8 +560,17 @@ class Address extends AbstractResponse
      */
     public $metro;
 
+    /**
+     * @var string ISO-код страны
+     */
+    public $country_iso_code;
+    /**
+     * @var string  ISO-код региона
+     */
+    public $region_iso_code;
+
     public function __toString()
     {
-        return (string) $this->result;
+        return (string)$this->result;
     }
 }
