@@ -564,10 +564,16 @@ class Address extends AbstractResponse
      * @var string ISO-код страны
      */
     public $country_iso_code;
+
     /**
      * @var string  ISO-код региона
      */
     public $region_iso_code;
+
+    /**
+     * @var string Федеральный округ РФ
+     */
+    public $federal_district;
 
     public function __toString()
     {
