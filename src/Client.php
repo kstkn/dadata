@@ -234,7 +234,7 @@ class Client
     public function getBalance()
     {
         $response = $this->query($this->prepareUri('profile/balance'), [], self::METHOD_GET);
-        return (float) $response;
+        return (float)$response;
     }
 
     /**
@@ -288,7 +288,7 @@ class Client
      * Populates object with data.
      *
      * @param AbstractResponse $object
-     * @param array            $data
+     * @param array $data
      *
      * @return AbstractResponse
      * @throws \ReflectionException
@@ -319,22 +319,23 @@ class Client
     protected function populateParty(array $response)
     {
         $management = null;
-        $managementData = $response['data']['management'];
+        $managementData = isset($response['data']['management']) ? $response['data']['management'] : [];
         if (is_array($managementData) && array_key_exists('name', $managementData) && array_key_exists('post', $managementData)) {
             list($name, $post) = array_values($response['data']['management']);
             $management = new Party\ManagementDto($name, $post);
         }
 
-        list($code, $full, $short) = array_values($response['data']['opf']);
+
+        list($code, $full, $short) = array_values(isset($response['data']['opf']) ? $response['data']['opf'] : ['', '', '']);
         $opf = new Party\OpfDto($code, $full, $short);
 
-        list($fullWithOpf, $shortWithOpf, $latin, $full, $short) = array_values($response['data']['name']);
+        list($fullWithOpf, $shortWithOpf, $latin, $full, $short) = array_values(isset($response['data']['name']) ? $response['data']['name'] : ['', '', '', '', '']);
         $name = new Party\NameDto($fullWithOpf, $shortWithOpf, $latin, $full, $short);
 
-        list($status, $actualityDate, $registrationDate, $liquidationDate) = array_values($response['data']['state']);
+        list($status, $actualityDate, $registrationDate, $liquidationDate) = array_values(isset($response['data']['state']) ? $response['data']['state'] : ['', '', '', '']);
         $state = new Party\StateDto($status, $actualityDate, $registrationDate, $liquidationDate);
 
-        list($value, $unrestrictedValue) = array_values($response['data']['address']);
+        list($value, $unrestrictedValue) = array_values(isset($response['data']['address']) ? $response['data']['address'] : ['', '']);
         $simpleAddress = new Party\AddressDto($value, $unrestrictedValue);
 
         $address = null;
@@ -343,18 +344,18 @@ class Client
         }
 
         return new Party\Party(
-            $response['value'],
-            $response['unrestricted_value'],
-            $response['data']['kpp'],
+            isset($response['value']) ? $response['value'] : '',
+            isset($response['unrestricted_value']) ? $response['unrestricted_value'] : '',
+            isset($response['data']['kpp']) ? $response['data']['kpp'] : '',
             $management,
-            $response['data']['branch_type'],
-            $response['data']['type'],
+            isset($response['data']['branch_type']) ? $response['data']['branch_type'] : '',
+            isset($response['data']['type']) ? $response['data']['type'] : '',
             $opf,
             $name,
-            $response['data']['inn'],
-            $response['data']['ogrn'],
-            $response['data']['okpo'],
-            $response['data']['okved'],
+            isset($response['data']['inn']) ? $response['data']['inn'] : '',
+            isset($response['data']['ogrn']) ? $response['data']['ogrn'] : '',
+            isset($response['data']['okpo']) ? $response['data']['okpo'] : '',
+            isset($response['data']['okved']) ? $response['data']['okved'] : '',
             $state,
             $simpleAddress,
             $address
@@ -365,7 +366,7 @@ class Client
      * Guesses and converts property type by phpdoc comment.
      *
      * @param \ReflectionProperty $property
-     * @param  mixed $value
+     * @param mixed $value
      * @return mixed
      */
     protected function getValueByAnnotatedType(\ReflectionProperty $property, $value)
@@ -375,10 +376,10 @@ class Client
             switch ($matches[1]) {
                 case 'integer':
                 case 'int':
-                    $value = (int) $value;
+                    $value = (int)$value;
                     break;
                 case 'float':
-                    $value = (float) $value;
+                    $value = (float)$value;
                     break;
             }
         }
