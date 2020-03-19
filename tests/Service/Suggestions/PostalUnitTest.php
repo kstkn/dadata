@@ -12,6 +12,8 @@ use Zend\Diactoros\UriFactory;
 
 /**
  * @coversDefaultClass \Gietos\Dadata\Service\Suggestions\PostalUnit
+ *
+ * @group api
  */
 class PostalUnitTest extends BaseTestCase
 {
