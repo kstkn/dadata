@@ -15,7 +15,7 @@ class JsonMediator
      */
     protected function getError(int $code, array $data): Error
     {
-        return new Error($code, $data['detail']);
+        return new Error($code, $data['detail'] ?? $data['message']);
     }
 
     /**
