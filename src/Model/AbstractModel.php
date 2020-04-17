@@ -23,10 +23,15 @@ abstract class AbstractModel implements ConfigurableInterface
         return array_keys($array) !== range(0, count($array) - 1);
     }
 
-    private function createObject(\ReflectionClass $class, $value)
+    private function getFactory(\ReflectionClass $class): string
     {
         $factoryClass = sprintf(__NAMESPACE__ . '\Factory\%sFactory', $class->getShortName());
-        if (class_exists($factoryClass)) {
+        return class_exists($factoryClass) ? $factoryClass : '';
+    }
+
+    private function createObject(\ReflectionClass $class, $value)
+    {
+        if ($factoryClass = $this->getFactory($class)) {
             return call_user_func_array([$factoryClass, 'create'], [$value]);
         }
 
