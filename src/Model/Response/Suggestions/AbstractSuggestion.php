@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Model\Response\Suggestions;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class AbstractSuggestion extends AbstractModel
+class AbstractSuggestion
 {
     /**
      * @var string

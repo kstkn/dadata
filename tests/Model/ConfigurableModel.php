@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Tests\Model;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class ConfigurableModel extends AbstractModel
+class ConfigurableModel
 {
     protected $someScalarProperty;
 

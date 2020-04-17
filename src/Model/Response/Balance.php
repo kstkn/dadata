@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Model\Response;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class Balance extends AbstractModel
+class Balance
 {
     /**
      * @var float

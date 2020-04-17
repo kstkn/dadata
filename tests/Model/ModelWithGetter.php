@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Tests\Model;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class ModelWithGetter extends AbstractModel
+class ModelWithGetter
 {
     protected $someProperty;
 

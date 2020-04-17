@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Model\Response;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class Address extends AbstractModel
+class Address
 {
     /**
      * внутри МКАД (Москва)
