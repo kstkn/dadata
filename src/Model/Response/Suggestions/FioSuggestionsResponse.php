@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Model\Response\Suggestions;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class FioSuggestionsResponse extends AbstractModel
+class FioSuggestionsResponse
 {
     /**
      * @var FioSuggestionsCollection

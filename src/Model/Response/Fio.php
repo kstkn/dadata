@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Model\Response;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class Fio extends AbstractModel
+class Fio
 {
     const GENDER_MALE = 'MALE';
 

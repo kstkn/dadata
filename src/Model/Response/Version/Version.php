@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Model\Response\Version;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class Version extends AbstractModel
+class Version
 {
     /**
      * @var Dadata

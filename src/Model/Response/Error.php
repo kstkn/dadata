@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Model\Response;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class Error extends AbstractModel
+class Error
 {
     /**
      * @var int

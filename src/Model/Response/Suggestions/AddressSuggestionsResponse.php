@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Model\Response\Suggestions;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class AddressSuggestionsResponse extends AbstractModel
+class AddressSuggestionsResponse
 {
     /**
      * @var AddressSuggestionsCollection

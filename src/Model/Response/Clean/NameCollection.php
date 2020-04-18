@@ -17,7 +17,7 @@ class NameCollection extends AbstractCollection
     /**
      * @inheritdoc
      */
-    protected function getClass(): string
+    public function getElementClass(): string
     {
         return Name::class;
     }

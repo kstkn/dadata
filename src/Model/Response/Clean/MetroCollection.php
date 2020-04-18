@@ -17,7 +17,7 @@ class MetroCollection extends NullableCollection
     /**
      * @inheritdoc
      */
-    protected function getClass(): string
+    public function getElementClass(): string
     {
         return Metro::class;
     }

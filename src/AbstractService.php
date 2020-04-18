@@ -2,6 +2,7 @@
 
 namespace Gietos\Dadata;
 
+use Gietos\Dadata\Model\Factory\MainFactory;
 use Gietos\Dadata\Model\Response\Error;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -36,9 +37,7 @@ abstract class AbstractService
      */
     public function getResult(ResponseInterface $response, $expectedResponseClass)
     {
-        $responseMediator = new JsonMediator;
-        $result = $responseMediator->getResult($response, $expectedResponseClass);
-
-        return $result;
+        $responseMediator = new JsonMediator(new MainFactory());
+        return $responseMediator->getResult($response, $expectedResponseClass);
     }
 }

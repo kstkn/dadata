@@ -2,9 +2,7 @@
 
 namespace Gietos\Dadata\Model\Response\Clean;
 
-use Gietos\Dadata\Model\AbstractModel;
-
-class Metro extends AbstractModel
+class Metro
 {
     /**
      * @var float

@@ -15,7 +15,7 @@ abstract class BaseTestCase extends TestCase
      *
      * @return mixed Method return.
      */
-    protected function invokeMethod(&$object, $methodName, array $parameters = [])
+    protected function invokeMethod($object, $methodName, array $parameters = [])
     {
         $reflection = new \ReflectionClass(get_class($object));
         $method = $reflection->getMethod($methodName);
@@ -24,8 +24,8 @@ abstract class BaseTestCase extends TestCase
         return $method->invokeArgs($object, $parameters);
     }
 
-    protected function loadDataFile(string $name)
+    protected function loadFixture(string $name): string
     {
-        return file_get_contents(__DIR__ . '/data/' . $name);
+        return file_get_contents(__DIR__ . '/Fixture/' . $name);
     }
 }

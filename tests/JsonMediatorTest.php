@@ -3,6 +3,7 @@
 namespace Gietos\Dadata\Tests;
 
 use Gietos\Dadata\JsonMediator;
+use Gietos\Dadata\Model\Factory\MainFactory;
 use Gietos\Dadata\Model\Response\Error;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -37,7 +38,8 @@ class JsonMediatorTest extends BaseTestCase
         $this->requestFactory = new RequestFactory();
         $this->responseFactory = new ResponseFactory();
         $this->streamFactory = new StreamFactory();
-        $this->jsonMediator = new JsonMediator();
+        $mainFactory = $this->createMock(MainFactory::class);
+        $this->jsonMediator = new JsonMediator($mainFactory);
     }
 
     public function testExceptionOnInvalidJsonSyntax()
