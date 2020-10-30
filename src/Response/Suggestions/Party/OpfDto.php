@@ -5,6 +5,10 @@ namespace Dadata\Response\Suggestions\Party;
 class OpfDto
 {
     /**
+     * @var string Версия справочника ОКОПФ (99, 2012 или 2014)
+     */
+    private $type;
+    /**
      * @var string Код ОКОПФ
      */
     private $code;
@@ -18,13 +22,23 @@ class OpfDto
     private $short;
 
     public function __construct(
+        $type,
         $code,
         $full,
         $short
     ) {
+        $this->type = $type;
         $this->code = $code;
         $this->full = $full;
         $this->short = $short;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
