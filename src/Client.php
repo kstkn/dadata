@@ -325,8 +325,11 @@ class Client
             $management = new Party\ManagementDto($name, $post);
         }
 
-        list($code, $full, $short) = array_values($response['data']['opf']);
-        $opf = new Party\OpfDto($code, $full, $short);
+        $type = $response['data']['opf']['type'];
+        $code = $response['data']['opf']['code'];
+        $full = $response['data']['opf']['full'];
+        $short = $response['data']['opf']['short'];
+        $opf = new Party\OpfDto($type, $code, $full, $short);
 
         list($fullWithOpf, $shortWithOpf, $latin, $full, $short) = array_values($response['data']['name']);
         $name = new Party\NameDto($fullWithOpf, $shortWithOpf, $latin, $full, $short);
